@@ -1,0 +1,51 @@
+parser: 'babel-eslint'
+rules:
+  indent:
+    - 2
+    - 2
+    - {"SwitchCase": 1}
+  quotes:
+    - 2
+    - single
+    - 'avoid-escape'
+  linebreak-style:
+    - 2
+    - unix
+  semi:
+    - 2
+    - always
+  comma-spacing: 2
+  space-infix-ops: 2
+  block-scoped-var: 2
+  no-console: 1
+  no-unused-vars: [1, {"argsIgnorePattern": "^_"}]
+  space-before-function-paren:
+    - 2
+    - 'never'
+  space-before-blocks:
+    - 2
+    - 'always'
+  new-parens: 2
+  max-len:
+    - 2
+    - 120
+    - 2
+  no-multiple-empty-lines: [2, {max: 2}]
+  eol-last: 2
+  no-trailing-spaces: 2
+  comma-dangle: 0
+env:
+  es6: true
+  browser: true
+  node: true
+extends: 'eslint:recommended'
+ecmaFeatures:
+  jsx: true
+  experimentalObjectRestSpread: true
+plugins:
+  - react
+globals:
+  __CLIENT__: true
+  RTCPeerConnection: true
+  RTCSessionDescription: true
+  RTCIceCandidate: true
