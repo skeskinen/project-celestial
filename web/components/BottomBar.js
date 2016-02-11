@@ -1,6 +1,6 @@
 import React, { Component, PropTypes } from 'react';
 
-export default class PlayerInfo extends Component {
+export default class BottomBar extends Component {
   render() {
     const {player} = this.props;
 
@@ -10,7 +10,7 @@ export default class PlayerInfo extends Component {
       background: 'blue',
       border: '2px',
       borderRadius: 4,
-      color: 'black',
+      color: 'white',
       padding: '1.5em'
     };
 

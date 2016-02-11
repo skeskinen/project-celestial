@@ -1,9 +1,5 @@
 var path = require('path');
 var webpack = require('webpack');
-var ExtractTextPlugin = require('extract-text-webpack-plugin');
-
-var autoprefixer = require('autoprefixer');
-var precss       = require('precss');
 
 var clientVariables =  {
   'process.env.BACKEND_HOST': process.env.BACKEND_HOST ? JSON.stringify(process.env.BACKEND_HOST) : 'undefined',
@@ -15,7 +11,7 @@ module.exports = {
   context: path.join(__dirname, '..'),
   output: {
     path: path.join(__dirname, '..', 'dist'),
-    filename: 'b[hash]/bundle.js'
+    filename: 'b[hash].js'
   },
   entry: ['./client'],
   module: {
@@ -26,17 +22,11 @@ module.exports = {
         path.join(__dirname, '..'),
         path.join(__dirname, '../../game')
       ] },
-      { test: /\.scss$/, loader: ExtractTextPlugin.extract('style',
-        'css!postcss!sass')},
-      { test: /\.css$/, loader: ExtractTextPlugin.extract('style', 'css!autoprefixer?browsers=last 2 versions')},
       { test: /\.(png|jpg|ico|woff|woff2|eot|ttf)$/, loader: 'url?limit=10240' },
       { test: /\.json$/, loader: 'json' },
       { test: /\.(yml|yaml)$/, loader: 'json!yaml' },
       { test: /\.svg$/, loader: 'svg-inline' },
     ],
-  },
-  postcss: function() {
-    return [autoprefixer, precss];
   },
   resolve: {
     modulesDirectories: ['web_modules', 'node_modules'],
@@ -46,6 +36,5 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin(clientVariables),
-    new ExtractTextPlugin('[name]-[chunkhash].css', {allChunks: true}),
   ],
 };

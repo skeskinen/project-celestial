@@ -1,5 +1,4 @@
 import React, { Component, PropTypes } from 'react';
-import { Button } from 'react-bootstrap';
 
 export default class GameLobby extends Component {
   render() {
@@ -16,7 +15,7 @@ export default class GameLobby extends Component {
             </div>
           ) : null
         }
-        <Button onClick={startGame}>Start game</Button>
+        <button onClick={startGame}>Start game</button>
       </div>
     );
   }

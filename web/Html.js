@@ -57,7 +57,7 @@ export default class Html extends Component
             <style dangerouslySetInnerHTML={{__html: require('./assets/stylesheets/style.scss')}}/> : null */}
         </head>
 
-        <body style={{backgroundColor: theme.backgroundColor}}>
+        <body style={{backgroundColor: theme.backgroundColor, margin: 0}}>
           <div style={{position: 'fixed', zIndex: -100 }} id='backgroundContainer' />
 
           { renderProps ?

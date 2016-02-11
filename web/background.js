@@ -37,6 +37,8 @@ if (Detector.webgl) {
 		//Z positioning of camera
 
 		camera.position.z = farPlane / 2;
+		camera.position.x = 5; //inital movement without mouse move
+		camera.position.y = -5;
 
 		scene = new THREE.Scene();
 		// scene.fog = new THREE.FogExp2( 0x000000, 0.0003 );
@@ -69,10 +71,14 @@ if (Detector.webgl) {
 
 
 	function render() {
-		camera.position.x += ((mouseX/2) - camera.position.x) * 0.005;
-		camera.position.y += ( - (mouseY/2) - camera.position.y) * 0.005;
-		camera.lookAt(scene.position );
-		renderer.render(scene, camera);
+		var dx = ((mouseX/2) - camera.position.x) * 0.005;
+		var dy = ( - (mouseY/2) - camera.position.y) * 0.005;
+		if(Math.abs(dx) > 0.005 || Math.abs(dy) > 0.005) {
+			camera.position.x += dx;
+			camera.position.y += dy;
+			camera.lookAt(scene.position );
+			renderer.render(scene, camera);
+		}
 	}
 
 	function onWindowResize() {
