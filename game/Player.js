@@ -11,6 +11,7 @@ export default class Player {
     };
     this.hp = 10;
     this.shield = 3;
+    this.deckSize = 0;
     this.cards = [];
     this.skills = Spell.defaultSkills;
   }
@@ -22,6 +23,7 @@ export default class Player {
       mana: this.mana,
       hp: this.hp,
       shield: this.shield,
+      deckSize: this.deckSize,
       cards: _.map(this.cards, Spell.toJSON),
       skills: _.mapValues(this.skills, _.partial(_.mapValues, _, Spell.toJSON)),
     };

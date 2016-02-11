@@ -21,13 +21,13 @@ export default class About extends Component {
           Icons are from <a href='http://game-icons.net/'>Game-icons.net project</a>. Individual authors:
         </p>
         <ul>
-          {/*<li>Lorc, <a href="http://lorcblog.blogspot.com">http://lorcblog.blogspot.com</a></li>*/}
-          {/*<li>Delapouite, <a href="http://delapouite.com">http://delapouite.com</a></li>*/}
+          <li>Lorc, <a href="http://lorcblog.blogspot.com">{'http://lorcblog.blogspot.com'}</a>: 3 mana types, shield</li>
+          <li>Delapouite, <a href="http://delapouite.com">{'http://delapouite.com'}</a>: deck</li>
           {/*<li>John Colburn, <a href="http://ninmunanmu.com">http://ninmunanmu.com</a></li>*/}
           {/*<li>Felbrigg, <a href="http://blackdogofdoom.blogspot.co.uk">http://blackdogofdoom.blogspot.co.uk</a></li>*/}
           {/*<li>John Redman, <a href="http://www.uniquedicetowers.com">http://www.uniquedicetowers.com</a></li>*/}
           {/*<li>Carl Olsen, <a href="https://twitter.com/unstoppableCarl">https://twitter.com/unstoppableCarl</a></li>*/}
-          {/*<li>sbed, <a href="http://opengameart.org/content/95-game-icons">http://opengameart.org/content/95-game-icons</a></li>*/}
+          <li>sbed, <a href="http://opengameart.org/content/95-game-icons">{'http://opengameart.org/content/95-game-icons'}</a></li>: health
           {/*<li>PriorBlue, <a href="http://forum.game-icons.net">http://forum.game-icons.net</a></li>*/}
           {/*<li>Willdabeast, <a href="http://wjbstories.blogspot.com">http://wjbstories.blogspot.com</a></li>*/}
           {/*<li>Viscious Speed, <a href="http://viscious-speed.deviantart.com">http://viscious-speed.deviantart.com</a></li>*/}

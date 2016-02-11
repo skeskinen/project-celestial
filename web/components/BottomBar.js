@@ -1,13 +1,16 @@
 import React, { Component, PropTypes } from 'react';
+import * as styles from '../styles';
+import * as theme from '../theme';
+import Radium from 'radium';
 
+@Radium
 export default class BottomBar extends Component {
   render() {
-    const {player} = this.props;
+    //const {player} = this.props;
 
-    const containerStyle = {
-      height: '100%',
-      width: '100%',
-      background: 'blue',
+    const style = {
+      ...styles.gameComponent,
+      background: theme.bottomBarGrey,
       border: '2px',
       borderRadius: 4,
       color: 'white',
@@ -15,8 +18,7 @@ export default class BottomBar extends Component {
     };
 
     return (
-      <div style={containerStyle}>
-        { player.name }
+      <div style={style}>
       </div>
     );
   }

@@ -17,11 +17,11 @@ class Home extends Component {
     this.handleResize = ::this.handleResize;
     this.submitName = ::this.submitName;
 
-    this.state = {windowWidth: 800, windowHeight: 600}; //windowWidth and windowHeight are for SSR
+    this.state = {windowWidth: 800, windowHeight: 600, fullyLoaded: false}; //windowWidth and windowHeight are for SSR
   }
 
   handleResize() {
-    this.setState({windowWidth: window.innerWidth, windowHeight: window.innerHeight});
+    this.setState({windowWidth: window.innerWidth, windowHeight: window.innerHeight, fullyLoaded: true});
   }
 
   componentDidMount() {
@@ -43,11 +43,11 @@ class Home extends Component {
 
   render() {
     const { game, gameActions } = this.props;
-    var { windowWidth, windowHeight } = this.state;
+    var { windowWidth, windowHeight, fullyLoaded } = this.state;
 
     const borderSize = 2;
-    windowWidth -= borderSize;
-    windowHeight -= borderSize;
+    windowWidth -= borderSize*2;
+    windowHeight -= borderSize*2;
 
     const targetRatio = 3 / 2;
     const curRatio = windowWidth / windowHeight;
@@ -63,7 +63,7 @@ class Home extends Component {
       marginTop = (windowHeight - newHeight) / 2;
     }
 
-    const fontNativeWidth = 1000;
+    const fontNativeWidth = 800;
 
     const panelStyle = {
       border: `${borderSize}px`,
@@ -78,6 +78,7 @@ class Home extends Component {
       position: 'absolute',
       fontSize: `${newWidth / fontNativeWidth}em`,
       overflow: 'hidden',
+      visibility: fullyLoaded ? 'visible' : 'hidden',
     };
 
     var gameElement = () => {

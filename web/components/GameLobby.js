@@ -1,5 +1,7 @@
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
 
+@Radium
 export default class GameLobby extends Component {
   render() {
     const {game, startGame} = this.props;

@@ -1,23 +1,22 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import InlineSVG from 'svg-inline-react';
+import _ from 'lodash';
 
 import * as gameActions from '../actions/game';
 import { PlayerInfo, BottomBar } from '../components';
+import { wrap } from '../styles';
 
 class GameArea extends Component {
   render() {
     const {game} = this.props;
     const {players} = game;
-    const playerInfoStyle = {
-      height: '10%',
-      width: '20%',
-      position: 'absolute',
-    };
+    const playerInfoSize = _.partial(wrap, 18, 13);
+
     return (
       <div>
-        <div style={playerInfoStyle}><PlayerInfo player={players[0]} /></div>
-        <div style={{...playerInfoStyle, top: '60%'}}><PlayerInfo player={players[1]} /></div>
+        {wrap(100, 20, 0, 85, <BottomBar />)}
+        {playerInfoSize(5, 10, <PlayerInfo player={players[0]} />)}
+        {playerInfoSize(20, 86, <PlayerInfo player={players[1]}/>)}
       </div>
     );
   }
