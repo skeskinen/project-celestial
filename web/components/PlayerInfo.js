@@ -29,6 +29,12 @@ export default class PlayerInfo extends Component {
       textAlign: 'center',
     };
 
+    const readyIndicatorStyle = {
+      ...styles.gameComponent,
+      background: player.ready ? theme.greenReadyStr : theme.redReadyStr,
+      borderRadius: '50%',
+    };
+
     const iconSize = _.partial(styles.wrapEm, 2.4, 1.2);
     const iconsTop = _.partial(iconSize, _, 36);
     const iconsBottom = _.partial(iconSize, _, 68);
@@ -39,6 +45,11 @@ export default class PlayerInfo extends Component {
     return (
       <div style={containerStyle} onClick={onClick}>
         { player.name }
+
+        {
+          styles.wrapEm(0.5, 0.5, 90, 5, <div style={readyIndicatorStyle}></div>
+          )
+        }
         {iconsTop(7.5,
           <NumberIcon icon={deckIcon} value={player.deckSize}
           textColor={black}

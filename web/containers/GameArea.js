@@ -17,7 +17,7 @@ import yellowManaIcon from '../assets/yellowMana.svg';
 
 class GameArea extends Component {
   render() {
-    const {game, ui, uiActions} = this.props;
+    const {game, ui, gameActions, uiActions} = this.props;
     const {players} = game;
     const playerInfoSize = _.partial(wrap, 18, 13);
 
@@ -25,15 +25,18 @@ class GameArea extends Component {
 
     const enemyTargetable = _.includes([protocol.TARGET_PLAYER, protocol.TARGET_ENEMY], ui.targetMode);
     const playerInfoOnClick = () => {
-      if (enemyTargetable) uiActions.selectedTarget();
+      if (enemyTargetable) {
+        uiActions.selectedTarget();
+        gameActions.castSpell(players[1].id);
+      }
     };
 
     return (
       <div>
         {wrap(100, 20, 0, 85, <BottomBar />)}
-        {playerInfoSize(5, 10, <PlayerInfo player={players[0]} targetable={enemyTargetable}
+        {playerInfoSize(20, 86, <PlayerInfo player={players[0]} targetable={false} />)}
+        {playerInfoSize(5, 10, <PlayerInfo player={players[1]} targetable={enemyTargetable}
           onClick={playerInfoOnClick} />)}
-        {playerInfoSize(20, 86, <PlayerInfo player={players[1]} targetable={false} />)}
         {ui.tooltip ? wrap(22, 11, 43, 72,
           <Tooltip>
             {wrapEm(3, 3, 5, 8,

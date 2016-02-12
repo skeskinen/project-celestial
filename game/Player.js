@@ -14,6 +14,8 @@ export default class Player {
     this.deckSize = 0;
     this.cards = [];
     this.skills = Spell.defaultSkills;
+    this.ready = false;
+    this.castedSpell = {};
   }
 
   toJSON() {
@@ -26,10 +28,23 @@ export default class Player {
       deckSize: this.deckSize,
       cards: _.map(this.cards, Spell.toJSON),
       skills: _.mapValues(this.skills, _.partial(_.mapValues, _, Spell.toJSON)),
+      ready: this.ready,
     };
   }
 
   start() {
+  }
+
+  takeDamage(obj) {
+    var s = (a) => a ? a : 0;
+    const { blue, red, yellow } = obj;
+    const total = s(blue) + s(red) + s(yellow);
+    if (this.shield < total) {
+      this.hp -= total - this.shield;
+      this.shield = 0;
+    } else {
+      this.shield -= total;
+    }
   }
 }
 
@@ -45,5 +60,6 @@ export function dummy() {
   var p = new Player();
   p.name = 'Dummy';
   p.id = global.clientIdCounter++;
+  p.ready = true;
   return p;
 }

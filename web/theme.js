@@ -32,6 +32,9 @@ var colors = {
 
   ...createVariants('black', Color('#070200')),
 
+  ...createVariants('greenReady', Color('#00ff00')),
+  ...createVariants('redReady', Color('#ff0000')),
+
   ...createVariants('yellowMana', Color('#98751E')),
   ...createVariants('blueMana', Color('#337eff')),
   ...createVariants('redMana',  Color('#e62c00')),

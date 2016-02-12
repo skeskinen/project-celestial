@@ -41,3 +41,9 @@ export function quickStart() {
   startGame();
   return { type: 'quik start' };
 }
+
+export function castSpell(target) {
+  const q = { type: protocol.CAST_SPELL, target };
+  send(q);
+  return q;
+}

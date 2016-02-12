@@ -33,19 +33,22 @@ wss.broadcast = function broadcast(data) {
 wss.on('connection', function(ws) {
   var id = global.clientIdCounter++;
   clients[id] = ws;
-  var room;
+  var room, player;
 
   ws.on('message', function(message) {
     var msg = JSON.parse(message);
     switch (msg.type) {
       case protocol.NAME:
         room = openRoom();
-        var player = Player.fromSocketNameId(ws, msg.data, id);
+        player = Player.fromSocketNameId(ws, msg.data, id);
         room.addPlayer(player);
         break;
       case protocol.START_GAME:
         if(room)
           room.start();
+        break;
+      case protocol.CAST_SPELL:
+        room.spellCast(player, msg);
         break;
     }
   });
