@@ -24,4 +24,4 @@ export const blueMana = Color('#337eff');
 export const redMana = Color('#e62c00');
 
 export const health = Color('#ff0000');
-export const shield = Color('#A61FDE');
+export const purple = Color('#A61FDE');

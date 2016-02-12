@@ -47,7 +47,7 @@ export default class PlayerInfo extends Component {
         {iconsTop(37.5,
           <NumberIcon icon={shieldIcon} value={player.shield}
           textColor={black}
-          iconColor={_.constant(theme.shield.rgbaString())} /> )
+          iconColor={_.constant(theme.purple.rgbaString())} /> )
         }
         {iconsTop(67.5,
           <NumberIcon icon={healthIcon} value={player.hp}
