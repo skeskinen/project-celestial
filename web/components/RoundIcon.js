@@ -9,11 +9,13 @@ import InlineSVG from 'svg-inline-react';
 @Radium
 export default class NumberIcon extends Component {
   render() {
-    const {icon, iconColor} = this.props;
+    const {icon, iconColor, onClick} = this.props;
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: theme.grey.rgbaString(),
+      background: theme.greyStr,
+      borderSize: '1px',
+      borderStyle: 'solid',
       borderRadius: '50%',
       textAlign: 'center',
     };
@@ -21,7 +23,7 @@ export default class NumberIcon extends Component {
     };
 
     return (
-      <div style={containerStyle}>
+      <div style={containerStyle} onClick={onClick}>
         {styles.wrap(76, 76, 12, 12, <InlineSVG style={{...iconStyle, fill: iconColor}} src={icon}/>)}
       </div>
     );

@@ -17,11 +17,11 @@ import shieldIcon from '../assets/shield.svg';
 @Radium
 export default class PlayerInfo extends Component {
   render() {
-    const {player} = this.props;
+    const {player, targetable, onClick} = this.props;
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: theme.moderateBlue.rgbaString(),
+      background: targetable ? theme.targetRedStr : theme.moderateBlueStr,
       border: '2px',
       borderRadius: 4,
       color: 'white',
@@ -37,7 +37,7 @@ export default class PlayerInfo extends Component {
     const white = _.constant('white');
 
     return (
-      <div style={containerStyle}>
+      <div style={containerStyle} onClick={onClick}>
         { player.name }
         {iconsTop(7.5,
           <NumberIcon icon={deckIcon} value={player.deckSize}
@@ -47,28 +47,28 @@ export default class PlayerInfo extends Component {
         {iconsTop(37.5,
           <NumberIcon icon={shieldIcon} value={player.shield}
           textColor={black}
-          iconColor={_.constant(theme.purple.rgbaString())} /> )
+          iconColor={theme.purpleC} /> )
         }
         {iconsTop(67.5,
           <NumberIcon icon={healthIcon} value={player.hp}
           textColor={black}
-          iconColor={_.constant(theme.health.rgbaString())} /> )
+          iconColor={theme.healthC} /> )
         }
 
         {iconsBottom(7.5,
           <NumberIcon icon={blueManaIcon} value={player.mana.blue}
           textColor={black}
-          iconColor={_.constant(theme.blueMana.rgbaString())} /> )
+          iconColor={theme.blueManaC} /> )
         }
         {iconsBottom(37.5,
           <NumberIcon icon={redManaIcon} value={player.mana.red}
           textColor={black}
-          iconColor={_.constant(theme.redMana.rgbaString())} /> )
+          iconColor={theme.redManaC} /> )
         }
         {iconsBottom(67.5,
           <NumberIcon icon={yellowManaIcon} value={player.mana.yellow}
           textColor={black}
-          iconColor={_.constant(theme.yellowMana.rgbaString())} /> )
+          iconColor={theme.yellowManaC} /> )
         }
 
         {/*

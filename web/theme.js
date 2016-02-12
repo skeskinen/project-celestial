@@ -1,27 +1,43 @@
 import Color from 'color';
+import _ from 'lodash';
 
-var bgColor = Color().rgb(0, 0, 17);
-export const backgroundColorInt = (bgColor.red() << 16) + (bgColor.green() << 8) + bgColor.blue();
-export const backgroundColor = bgColor.hexString();
+function createVariants(name, c) {
+  return {
+    [name + 'Str']: c.rgbaString(),
+    [name + 'C']: _.constant(c.rgbaString()),
+    [name + 'Raw']: c,
+  };
+}
 
-export const blue = Color('#330099');
-export const borderBlue = blue.clone().darken(0.2).rgbaString();
-export const bgBlue = blue.clone().alpha(0.3).rgbaString();
+const bgColor = Color().rgb(0, 0, 17);
+const blue = Color('#330099');
+const grey = Color('#AAAABD');
+var colors = {
+  backgroundColorInt: (bgColor.red() << 16) + (bgColor.green() << 8) + bgColor.blue(),
+  backgroundColor: bgColor.hexString(),
 
-export const moderateBlue = Color('#244665');
+  ...createVariants('blue', blue),
+  borderBlue: blue.clone().darken(0.2).rgbaString(),
+  bgBlue: blue.clone().alpha(0.3).rgbaString(),
 
-export const textLight = '#BEC0C1';
+  ...createVariants('moderateBlue', Color('#244665')),
+  ...createVariants('targetRed',  Color('#d61c00')),
 
-export const grey = Color('#AAAABD');
-export const bottomBarGrey = grey.clone().alpha(0.4).rgbaString();
+  ...createVariants('textLight', Color('#BEC0C1')),
 
-export const teal = Color('#00c5ff');
+  ...createVariants('grey', grey),
+  bottomBarGrey: grey.clone().alpha(0.4).rgbaString(),
 
-export const black = Color('#070200');
+  ...createVariants('teal', Color('#00c5ff')),
 
-export const yellowMana = Color('#98751E');
-export const blueMana = Color('#337eff');
-export const redMana = Color('#e62c00');
+  ...createVariants('black', Color('#070200')),
 
-export const health = Color('#ff0000');
-export const purple = Color('#A61FDE');
+  ...createVariants('yellowMana', Color('#98751E')),
+  ...createVariants('blueMana', Color('#337eff')),
+  ...createVariants('redMana',  Color('#e62c00')),
+
+  ...createVariants('health', Color('#ff0000')),
+  ...createVariants('purple', Color('#A61FDE')),
+};
+
+module.exports = colors;

@@ -1,7 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import { connect } from 'react-redux';
-import { routeActions } from 'react-router-redux';
-import * as gameActions from '../actions/game';
+import { routeActions as routeActionsRaw } from 'react-router-redux';
+import * as gameActionsRaw from '../actions/game';
+import * as uiActionsRaw from '../actions/ui';
 import { bindActionCreators } from 'redux';
 import { GameLobby } from '../components';
 import GameArea from './GameArea';
@@ -42,12 +43,12 @@ class Home extends Component {
   }
 
   render() {
-    const { game, gameActions } = this.props;
+    const { game, gameActions, uiActions } = this.props;
     var { windowWidth, windowHeight, fullyLoaded } = this.state;
 
     const borderSize = 2;
-    windowWidth -= borderSize*2;
-    windowHeight -= borderSize*2;
+    windowWidth -= borderSize * 2;
+    windowHeight -= borderSize * 2;
 
     const targetRatio = 3 / 2;
     const curRatio = windowWidth / windowHeight;
@@ -99,7 +100,7 @@ class Home extends Component {
     };
 
     return (
-      <div style={panelStyle}>
+      <div style={panelStyle} onClick={uiActions.closeTooltips}>
         { gameElement() }
       </div>
     );
@@ -108,8 +109,9 @@ class Home extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    routeActions: bindActionCreators(routeActions, dispatch),
-    gameActions: bindActionCreators(gameActions, dispatch),
+    routeActions: bindActionCreators(routeActionsRaw, dispatch),
+    gameActions: bindActionCreators(gameActionsRaw, dispatch),
+    uiActions: bindActionCreators(uiActionsRaw, dispatch),
   };
 }
 
