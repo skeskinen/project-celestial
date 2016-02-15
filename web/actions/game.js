@@ -42,8 +42,8 @@ export function quickStart() {
   return { type: 'quik start' };
 }
 
-export function castSpell(target) {
-  const q = { type: protocol.CAST_SPELL, target };
+export function castSpell(spellInfo) {
+  const q = { ...spellInfo, type: protocol.CAST_SPELL };
   send(q);
   return q;
 }

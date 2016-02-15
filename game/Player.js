@@ -15,7 +15,6 @@ export default class Player {
     this.cards = [];
     this.skills = Spell.defaultSkills;
     this.ready = false;
-    this.castedSpell = {};
   }
 
   toJSON() {
@@ -45,6 +44,14 @@ export default class Player {
     } else {
       this.shield -= total;
     }
+  }
+
+  paySpell(obj) {
+    var s = (a) => a ? a : 0;
+    const { blue, red, yellow } = obj;
+    this.mana.blue -= s(blue);
+    this.mana.red -= s(red);
+    this.mana.yellow -= s(yellow);
   }
 }
 

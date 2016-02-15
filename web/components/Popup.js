@@ -1,10 +1,13 @@
 import React, { Component, PropTypes } from 'react';
+import Radium from 'radium';
+import {connectMultireducer} from 'multireducer';
+
 import * as styles from '../styles';
 import * as theme from '../theme';
-import Radium from 'radium';
+import * as popupActionsRaw from '../actions/popup';
 
 @Radium
-export default class BottomBar extends Component {
+class Popup extends Component {
   constructor() {
     super();
 
@@ -12,12 +15,11 @@ export default class BottomBar extends Component {
   }
 
   onClick(e) {
-    console.log('onclick');
     e.stopPropagation();
   }
 
   render() {
-    const {children} = this.props;
+    const {children, popup} = this.props;
 
     const style = {
       ...styles.gameComponent,
@@ -25,13 +27,22 @@ export default class BottomBar extends Component {
       border: '2px',
       borderRadius: 4,
       color: 'white',
-      padding: '1.5em'
+      padding: '1.5em',
     };
 
     return (
       <div onClick={this.onClick} style={style}>
         { children }
       </div>
-    );
+     );
   }
 }
+
+const mapStateToProps = (key, state) => ({ popup: state.popups[key] });
+
+const mapDispatchToProps = popupActionsRaw;
+
+export default connectMultireducer(
+  mapStateToProps,
+  mapDispatchToProps
+)(Popup);

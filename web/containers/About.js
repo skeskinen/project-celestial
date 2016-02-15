@@ -27,7 +27,7 @@ export default class About extends Component {
           {/*<li>Felbrigg, <a href="http://blackdogofdoom.blogspot.co.uk">http://blackdogofdoom.blogspot.co.uk</a></li>*/}
           {/*<li>John Redman, <a href="http://www.uniquedicetowers.com">http://www.uniquedicetowers.com</a></li>*/}
           {/*<li>Carl Olsen, <a href="https://twitter.com/unstoppableCarl">https://twitter.com/unstoppableCarl</a></li>*/}
-          <li>sbed, <a href="http://opengameart.org/content/95-game-icons">{'http://opengameart.org/content/95-game-icons'}</a></li>: health
+          <li>sbed, <a href="http://opengameart.org/content/95-game-icons">{'http://opengameart.org/content/95-game-icons'}</a></li>: health, regen
           {/*<li>PriorBlue, <a href="http://forum.game-icons.net">http://forum.game-icons.net</a></li>*/}
           {/*<li>Willdabeast, <a href="http://wjbstories.blogspot.com">http://wjbstories.blogspot.com</a></li>*/}
           {/*<li>Viscious Speed, <a href="http://viscious-speed.deviantart.com">http://viscious-speed.deviantart.com</a></li>*/}

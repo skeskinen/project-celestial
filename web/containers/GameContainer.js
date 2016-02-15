@@ -100,7 +100,7 @@ class Home extends Component {
     };
 
     return (
-      <div style={panelStyle} onClick={uiActions.closeTooltips}>
+      <div style={panelStyle} onClick={uiActions.closeAllPopups}>
         { gameElement() }
       </div>
     );
