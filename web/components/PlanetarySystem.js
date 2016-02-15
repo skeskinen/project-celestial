@@ -4,6 +4,7 @@ import * as theme from '../theme';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import _ from 'lodash';
+import { findDOMNode } from 'react-dom';
 
 import bluePlanet from '../assets/bluePlanet.png';
 import redPlanet from '../assets/redPlanet.png';
@@ -11,8 +12,28 @@ import yellowPlanet from '../assets/yellowPlanet.png';
 
 @Radium
 class PlanetarySystem extends Component {
+  componentDidMount() {
+    var { game: { players, me } } = this.props;
+    const myIndex = _.findIndex(players, {id: me.id});
+    var canvas = this.refs.canvas;
+    var ctx = canvas.getContext('2d');
+    players.forEach((_p, i) => {
+      const l = players.length;
+      var start = +(Math.PI / 2) - (Math.PI / l); // phase 0 is at the start of player 0's sector
+      var sectorSize = 2 * Math.PI / l;
+      var offset = myIndex * sectorSize; // make everyone see planets in the same phase
+      ctx.beginPath();
+      ctx.moveTo(500, 500);
+      ctx.arc(500, 500, 500, start + sectorSize * i + offset, start + sectorSize * (i + 1) + offset);
+      ctx.fillStyle = theme.players[i];
+      ctx.fill();
+    });
+
+  }
+
   render() {
-    var { game: { planets } } = this.props;
+    var { game: { planets, players, me } } = this.props;
+    const myIndex = _.findIndex(players, {id: me.id});
 
     const style = {
       ...styles.gameComponent,
@@ -29,16 +50,18 @@ class PlanetarySystem extends Component {
 
     function calcCircleLocation(phase, speed) {
       var numberOfPoints = speed;
-      var angleIncrement = 2 * Math.PI / numberOfPoints;
+      var angleIncrement = - 2 * Math.PI / numberOfPoints;
       var circleRadius = 1;
-      var start = 0;
-      var x = (circleRadius * Math.cos(angleIncrement * phase + start));
-      var y = -(circleRadius * Math.sin(angleIncrement * phase + start));
+      var start = -(Math.PI / 2) + (Math.PI / players.length); // phase 0 is at the start of player 0's sector
+      var phaseOffset = 0.5 + myIndex * (speed / players.length); // make everyone see planets in the same phase
+      var x = (circleRadius * Math.cos(angleIncrement * (phase + phaseOffset) + start));
+      var y = -(circleRadius * Math.sin(angleIncrement * (phase + phaseOffset) + start));
       return [x, y];
     }
 
     return (
       <div style={style}>
+        <canvas style={{...styles.gameComponent, opacity: '0.3'}} ref='canvas' width={1000} height={1000}/>
         { planets.map((_p, i) => {
           const j = 18 + 82 / planets.length * i;
           const s = j, p = 50 - j / 2;
