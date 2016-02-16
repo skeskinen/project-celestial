@@ -8,7 +8,7 @@ import * as protocol from '../../game/protocol';
 import * as gameActionsRaw from '../actions/game';
 import * as uiActionsRaw from '../actions/ui';
 import * as popupActionsRaw from '../actions/popup';
-import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, PlanetarySystem } from '../components';
+import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, StarSystem } from '../components';
 import { wrap, wrapEm } from '../styles';
 import * as theme from '../theme';
 
@@ -78,7 +78,7 @@ class GameArea extends Component {
     return (
       <div>
         {wrap(100, 20, 0, 85, <BottomBar />)}
-        {wrapEm(23, 23, 27, 14, <PlanetarySystem />)}
+        {wrapEm(23, 23, 27, 14, <StarSystem />)}
         <div style={{pointerEvents: 'none'}}>{wrap(60, 16, 20, 65, <Log />)}</div>
         {playerInfoSize(20, 86, <PlayerInfo player={me} targetable={false} />)}
         {

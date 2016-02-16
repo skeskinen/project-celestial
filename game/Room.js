@@ -54,7 +54,7 @@ export default class Room {
     const colors = ['blue', 'red', 'yellow'];
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     for (var i = 0; i < 6; i++) {
-      const speedMult = _.sample(_.range(2, 6));
+      const speedMult = _.sample(_.range(Math.floor(1 + i / 2), 2 + i));
       const speed = nPlayers * speedMult;
       var name = `${_.sample(possible)}${_.sample(possible).toLowerCase()} ${Math.floor(Math.random() * 99)}`;
       this.planets.push({phase: _.sample(_.range(0, speed)), speed, color: _.sample(colors), name });
