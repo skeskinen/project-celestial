@@ -8,7 +8,7 @@ export const gameComponent = {
   position: 'absolute',
 };
 
-export function wrap(width, height, left, top, elem, key) {
+export function wrap(width, height, left, top, elem, key, ref) {
   const style = {
     position: 'absolute',
     left: `${left}%`,
@@ -16,12 +16,12 @@ export function wrap(width, height, left, top, elem, key) {
     width: `${width}%`,
     height: `${height}%`,
   };
-  return (<div style={style} key={key}>
+  return (<div style={style} key={key} ref={ref}>
     {elem}
   </div>);
 }
 
-export function wrapEm(width, height, left, top, elem, key) {
+export function wrapEm(width, height, left, top, elem, key, ref) {
   const style = {
     position: 'absolute',
     left: `${left}%`,
@@ -29,7 +29,7 @@ export function wrapEm(width, height, left, top, elem, key) {
     width: `${width}em`,
     height: `${height}em`,
   };
-  return (<div style={style} key={key}>
+  return (<div style={style} key={key} ref={ref}>
     {elem}
   </div>);
 }

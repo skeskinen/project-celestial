@@ -52,10 +52,12 @@ export default class Room {
   mkPlanets() {
     const nPlayers = this.players.length;
     const colors = ['blue', 'red', 'yellow'];
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
     for (var i = 0; i < 6; i++) {
       const speedMult = _.sample(_.range(2, 6));
       const speed = nPlayers * speedMult;
-      this.planets.push({phase: _.sample(_.range(0, speed)), speed, color: _.sample(colors) });
+      var name = `${_.sample(possible)}${_.sample(possible).toLowerCase()} ${Math.floor(Math.random() * 99)}`;
+      this.planets.push({phase: _.sample(_.range(0, speed)), speed, color: _.sample(colors), name });
     }
   }
 

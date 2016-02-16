@@ -6,12 +6,28 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import { findDOMNode } from 'react-dom';
 
+import Popup from './Popup';
+import * as popupActionsRaw from '../actions/popup';
+import { multireducerBindActionCreators } from 'multireducer';
+
 import bluePlanet from '../assets/bluePlanet.png';
 import redPlanet from '../assets/redPlanet.png';
 import yellowPlanet from '../assets/yellowPlanet.png';
 
 @Radium
 class PlanetarySystem extends Component {
+  constructor() {
+    super();
+
+    this.popupW = 20;
+    this.popupH = 20;
+    this.planetSize = 8;
+
+    this.planetClicked = ::this.planetClicked;
+
+    this.state = { popupX: 0, popupY: 0, popupPlanet: undefined };
+  }
+
   componentDidMount() {
     var { game: { players, me } } = this.props;
     const myIndex = _.findIndex(players, {id: me.id});
@@ -28,16 +44,31 @@ class PlanetarySystem extends Component {
       ctx.fillStyle = theme.players[i];
       ctx.fill();
     });
+  }
 
+  planetClicked(p, x, y) {
+    return () => {
+      const { popupActions } = this.props;
+
+      popupActions.show();
+
+      var popup = this.refs.popup;
+
+      const popupX = x > 50 ? x - this.popupW : x + this.planetSize;
+      const popupY = y > 80 ? y - this.popupH : (y < 20 ? y + this.planetSize : y);
+
+      this.setState({popupX, popupY, popupPlanet: p});
+    };
   }
 
   render() {
-    var { game: { planets, players, me } } = this.props;
+    var { game: { planets, players, me }, popups } = this.props;
     const myIndex = _.findIndex(players, {id: me.id});
 
     const style = {
       ...styles.gameComponent,
     };
+
 
     const lineStyle = {
       ...styles.gameComponent,
@@ -65,14 +96,15 @@ class PlanetarySystem extends Component {
         { planets.map((_p, i) => {
           const j = 18 + 82 / planets.length * i;
           const s = j, p = 50 - j / 2;
-          return styles.wrap(s, s, p, p, <div style={lineStyle}/>, i); }
-        )}
+          return styles.wrap(s, s, p, p, <div style={lineStyle}/>, i);
+        })}
 
         { planets.map((p, i) => {
           const j = 18 + 82 / planets.length * i;
-          const s = 8;
+          const s = this.planetSize;
           const point = calcCircleLocation(p.phase, p.speed);
-          const x = point[0] * j / 2 + 50 - s / 2, y = point[1] * j / 2 + 50 - s / 2 ;
+          const x = point[0] * j / 2 + 50 - s / 2;
+          const y = point[1] * j / 2 + 50 - s / 2;
           var texture;
           switch (p.color) {
             case 'blue':
@@ -84,15 +116,27 @@ class PlanetarySystem extends Component {
             case 'yellow':
               texture = yellowPlanet;
               break;
-
           }
           return styles.wrap(s, s, x, y,
-            <img src={texture} style={styles.gameComponent}/>, i);
-        }
-        )}
+                <img src={texture} style={styles.gameComponent} onClick={this.planetClicked(p, x, y)} />, i);
+        })}
+        <Popup multireducerKey='planet' x={this.state.popupX} y={this.state.popupY}
+          w={this.popupW} h={this.popupH} ref='popup'>
+          { (() => {
+            const p = this.state.popupPlanet;
+            console.log(p);
+            return <span>{p ? p.name : ''}</span>;
+          })()}
+        </Popup>
       </div>
     );
   }
 }
 
-export default connect(({game}) => ({game}), {})(PlanetarySystem);
+function mapDispatchToProps(dispatch) {
+  return {
+    popupActions: multireducerBindActionCreators('planet', popupActionsRaw, dispatch),
+  };
+}
+
+export default connect(({game, popups}) => ({game, popups}), mapDispatchToProps)(PlanetarySystem);

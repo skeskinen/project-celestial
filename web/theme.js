@@ -35,8 +35,7 @@ var colors = {
   ...createVariants('greenReady', Color('#00ff00')),
   ...createVariants('redReady', Color('#ff0000')),
 
-  ...createVariants('yellowMana', Color('#98751E')),
-  ...createVariants('blueMana', Color('#337eff')),
+  ...createVariants('blueMana', Color('#00b4ff')),
   ...createVariants('redMana',  Color('#e62c00')),
 
   ...createVariants('health', Color('#ff0000')),

@@ -46,12 +46,10 @@ export const defaultSkills = {
   missile: {
     red: mkMissile('red'),
     blue: mkMissile('blue'),
-    yellow: mkMissile('yellow'),
   },
   regen: {
     red: mkRegen('red'),
     blue: mkRegen('blue'),
-    yellow: mkRegen('yellow'),
   }
 };
 

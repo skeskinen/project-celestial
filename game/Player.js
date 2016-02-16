@@ -7,7 +7,6 @@ export default class Player {
     this.mana = {
       red: 10,
       blue: 10,
-      yellow: 10,
     };
     this.hp = 10;
     this.shield = 3;
@@ -36,8 +35,8 @@ export default class Player {
 
   takeDamage(obj) {
     var s = (a) => a ? a : 0;
-    const { blue, red, yellow } = obj;
-    const total = s(blue) + s(red) + s(yellow);
+    const { blue, red } = obj;
+    const total = s(blue) + s(red);
     if (this.shield < total) {
       this.hp -= total - this.shield;
       this.shield = 0;
@@ -48,10 +47,9 @@ export default class Player {
 
   paySpell(obj) {
     var s = (a) => a ? a : 0;
-    const { blue, red, yellow } = obj;
+    const { blue, red } = obj;
     this.mana.blue -= s(blue);
     this.mana.red -= s(red);
-    this.mana.yellow -= s(yellow);
   }
 }
 

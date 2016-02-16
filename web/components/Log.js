@@ -16,7 +16,8 @@ class Log extends Component {
       border: '2px',
       borderRadius: 4,
       color: 'white',
-      padding: '0.4em'
+      padding: '0.4em',
+      pointerEvents: 'none',
     };
 
     const lines = _.takeRight(log.lines, 4);

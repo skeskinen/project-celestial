@@ -19,7 +19,7 @@ class Popup extends Component {
   }
 
   render() {
-    const {children, popup} = this.props;
+    const {children, popup, x, y, w, h} = this.props;
 
     const style = {
       ...styles.gameComponent,
@@ -27,7 +27,13 @@ class Popup extends Component {
       border: '2px',
       borderRadius: 4,
       color: 'white',
-      padding: '1.5em',
+      left: `${x}%`,
+      top: `${y}%`,
+      width: `${w}%`,
+      height: `${h}%`,
+      textAlign: 'center',
+
+      display: popup.visible ? 'block' : 'none',
     };
 
     return (

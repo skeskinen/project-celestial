@@ -16,7 +16,6 @@ import missileIcon from '../assets/magic-missile.svg';
 import regenIcon from '../assets/regen.svg';
 import blueManaIcon from '../assets/blueMana.svg';
 import redManaIcon from '../assets/redMana.svg';
-import yellowManaIcon from '../assets/yellowMana.svg';
 
 class GameArea extends Component {
   constructor() {
@@ -51,20 +50,15 @@ class GameArea extends Component {
     const myIndex = _.findIndex(players, {id: me.id});
     const others = _.drop(players, myIndex + 1).concat(_.take(players, myIndex));
 
-    const skillPopup = (skill) => (
-      popups[skill].visible ? _.partial(wrap, 22, 11, _, 72,
-        <Popup multireducerKey={skill}>
+    const skillPopup = (skill, x) =>
+        <Popup x={x} y={72} w={14} h={11} multireducerKey={skill}>
           {wrapEm(3, 3, 5, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'blue')}
               icon={blueManaIcon} iconColor={theme.blueManaStr}/>)}
-          {wrapEm(3, 3, 37, 8,
+          {wrapEm(3, 3, 53, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'red')}
               icon={redManaIcon} iconColor={theme.redManaStr}/>)}
-          {wrapEm(3, 3, 69, 8,
-            <RoundIcon onClick={this.selectedSkill(skill, 'yellow')}
-              icon={yellowManaIcon} iconColor={theme.yellowManaStr}/>)}
-        </Popup>
-      ) : _.constant(null));
+        </Popup>;
 
     const enemyInfo = (p) => _.partial(playerInfoSize, _, _,
       <PlayerInfo player={p} targetable={enemyTargetable}
@@ -85,7 +79,7 @@ class GameArea extends Component {
       <div>
         {wrap(100, 20, 0, 85, <BottomBar />)}
         {wrapEm(23, 23, 27, 14, <PlanetarySystem />)}
-        {wrap(60, 16, 20, 65, <Log />)}
+        <div style={{pointerEvents: 'none'}}>{wrap(60, 16, 20, 65, <Log />)}</div>
         {playerInfoSize(20, 86, <PlayerInfo player={me} targetable={false} />)}
         {
           others.map((p, i) => {
@@ -93,10 +87,10 @@ class GameArea extends Component {
             return enemyInfo(p)(point[0] + xOffset, point[1] + yOffset);
           })
         }
-        {skillPopup('missile')(43)}
+        {skillPopup('missile', 46)}
         {skillIcon(50, <RoundIcon onClick={missilePopupActions.show}
           icon={missileIcon} iconColor={theme.purpleStr}/>)}
-        {skillPopup('regen')(51)}
+        {skillPopup('regen', 54)}
         {skillIcon(58, <RoundIcon onClick={regenPopupActions.show}
           icon={regenIcon} iconColor={theme.purpleStr}/>)}
       </div>

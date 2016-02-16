@@ -9,7 +9,6 @@ import NumberIcon from './NumberIcon';
 
 import blueManaIcon from '../assets/blueMana.svg';
 import redManaIcon from '../assets/redMana.svg';
-import yellowManaIcon from '../assets/yellowMana.svg';
 import healthIcon from '../assets/health.svg';
 import deckIcon from '../assets/deck.svg';
 import shieldIcon from '../assets/shield.svg';
@@ -76,19 +75,6 @@ export default class PlayerInfo extends Component {
           textColor={black}
           iconColor={theme.redManaC} /> )
         }
-        {iconsBottom(67.5,
-          <NumberIcon icon={yellowManaIcon} value={player.mana.yellow}
-          textColor={black}
-          iconColor={theme.yellowManaC} /> )
-        }
-
-        {/*
-        <InlineSVG style={{...icon, fill: theme.blueMana.rgbaString(), left:'10%'}} src={blueMana}/>
-        <InlineSVG style={{...icon, fill: theme.redMana.rgbaString(), left: '30%'}} src={redMana}/>
-        <InlineSVG style={{...icon, fill: theme.yellowMana.rgbaString(), left:'50%'}} src={yellowMana}/>
-        */
-        }
-
       </div>
     );
   }
