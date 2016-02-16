@@ -1,9 +1,9 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
 import {connectMultireducer} from 'multireducer';
+import { connect } from 'react-redux';
 
 import * as styles from '../styles';
-import * as theme from '../theme';
 import * as popupActionsRaw from '../actions/popup';
 
 @Radium
@@ -19,7 +19,7 @@ class Popup extends Component {
   }
 
   render() {
-    const {children, popup, x, y, w, h} = this.props;
+    const {children, popup, x, y, w, h, theme} = this.props;
 
     const style = {
       ...styles.gameComponent,
@@ -44,7 +44,7 @@ class Popup extends Component {
   }
 }
 
-const mapStateToProps = (key, state) => ({ popup: state.popups[key] });
+const mapStateToProps = (key, state) => ({ popup: state.popups[key], theme: state.theme });
 
 const mapDispatchToProps = popupActionsRaw;
 

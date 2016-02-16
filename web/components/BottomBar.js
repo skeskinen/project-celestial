@@ -1,12 +1,13 @@
 import React, { Component, PropTypes } from 'react';
 import * as styles from '../styles';
-import * as theme from '../theme';
 import Radium from 'radium';
+import { connect } from 'react-redux';
 
+@connect(({theme}) => ({theme}), {})
 @Radium
 export default class BottomBar extends Component {
   render() {
-    //const {player} = this.props;
+    const {theme} = this.props;
 
     const style = {
       ...styles.gameComponent,

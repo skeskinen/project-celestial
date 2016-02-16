@@ -14,7 +14,7 @@ import './background';
 const client = new ApiClient();
 const ws = window.ws = new WebSocket('ws://localhost:8080');
 
-const store = configureStore(browserHistory, client, window.__data);
+const store = configureStore(browserHistory, client);
 
 function dispatchConnect() {
   store.dispatch({
@@ -33,10 +33,14 @@ ws.addEventListener('message', e => {
 });
 
 render(
-  <Provider store={store} key='provider'>
+  <Provider store={store}>
     <Router history={browserHistory}>
       { routes }
     </Router>
   </Provider>,
   document.getElementById('root')
 );
+
+if (module.hot) {
+  module.hot.accept('./theme');
+}

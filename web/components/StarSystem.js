@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import * as styles from '../styles';
-import * as theme from '../theme';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -30,7 +29,7 @@ class StarSystem extends Component {
   }
 
   componentDidMount() {
-    var { game: { players, me } } = this.props;
+    var { game: { players, me }, theme } = this.props;
     const myIndex = _.findIndex(players, {id: me.id});
     var canvas = this.refs.canvas;
     var ctx = canvas.getContext('2d');
@@ -152,4 +151,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({game, popups}) => ({game, popups}), mapDispatchToProps)(StarSystem);
+export default connect(({game, popups, theme}) => ({game, popups, theme}), mapDispatchToProps)(StarSystem);

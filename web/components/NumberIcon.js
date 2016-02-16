@@ -1,15 +1,15 @@
 import React, { Component, PropTypes } from 'react';
 import * as styles from '../styles';
 import Radium from 'radium';
-import * as theme from '../theme';
-
+import { connect } from 'react-redux';
 
 import InlineSVG from 'svg-inline-react';
 
+@connect(({theme}) => ({theme}), {})
 @Radium
 export default class NumberIcon extends Component {
   render() {
-    const {icon, value, iconColor, textColor} = this.props;
+    const {icon, value, iconColor, textColor, theme} = this.props;
 
     const containerStyle = {
       ...styles.gameComponent,

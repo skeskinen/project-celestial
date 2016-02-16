@@ -6,7 +6,6 @@ import * as uiActionsRaw from '../actions/ui';
 import { bindActionCreators } from 'redux';
 import { GameLobby } from '../components';
 import GameArea from './GameArea';
-import * as theme from '../theme';
 
 class Home extends Component {
   static propTypes = {
@@ -43,7 +42,7 @@ class Home extends Component {
   }
 
   render() {
-    const { game, gameActions, uiActions } = this.props;
+    const { game, gameActions, uiActions, theme } = this.props;
     var { windowWidth, windowHeight, fullyLoaded } = this.state;
 
     const borderSize = 2;
@@ -115,4 +114,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({game}) => ({game}), mapDispatchToProps)(Home);
+export default connect(({game, theme}) => ({game, theme}), mapDispatchToProps)(Home);

@@ -1,6 +1,5 @@
 import React, { Component, PropTypes } from 'react';
 import * as styles from '../styles';
-import * as theme from '../theme';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import _ from 'lodash';
@@ -8,7 +7,7 @@ import _ from 'lodash';
 @Radium
 class Log extends Component {
   render() {
-    const {log} = this.props;
+    const {log, theme} = this.props;
 
     const style = {
       ...styles.gameComponent,
@@ -34,4 +33,4 @@ class Log extends Component {
   }
 }
 
-export default connect(({log}) => ({ log }), {})(Log);
+export default connect(({log, theme}) => ({ log, theme }), {})(Log);

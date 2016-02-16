@@ -13,7 +13,8 @@ export default function configureStore(history, client, data) {
   if (module.hot) {
     // Enable Webpack hot module replacement for reducers
     module.hot.accept('../reducer', () => {
-      const nextReducer = require('../reducer');
+      const nextReducer = require('../reducer').default;
+      console.log(nextReducer);
       store.replaceReducer(nextReducer);
     });
   }

@@ -44,4 +44,6 @@ var colors = {
   players: ['#ff8080', '#789cf0', '#b0de6f', '#cc66c0', '#5dbaab', '#f2ba79', '#8e71e3', '#6ed169'],
 };
 
-module.exports = colors;
+export default function(state = colors, _action) {
+  return colors;
+}

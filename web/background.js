@@ -1,8 +1,6 @@
 import THREE from 'three';
 import Detector from 'three/examples/js/Detector';
 
-import * as theme from './theme';
-
 if (Detector.webgl) {
   var scene, camera, renderer;
 
@@ -48,7 +46,7 @@ if (Detector.webgl) {
 
     renderer = new THREE.WebGLRenderer();
 
-    renderer.setClearColor(theme.backgroundColorInt, 1);
+    renderer.setClearColor(0x000011, 1);
     renderer.setPixelRatio(window.devicePixelRatio);
     renderer.setSize(WIDTH, HEIGHT);
     container.appendChild(renderer.domElement);

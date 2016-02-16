@@ -10,7 +10,6 @@ import * as uiActionsRaw from '../actions/ui';
 import * as popupActionsRaw from '../actions/popup';
 import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, StarSystem } from '../components';
 import { wrap, wrapEm } from '../styles';
-import * as theme from '../theme';
 
 import missileIcon from '../assets/magic-missile.svg';
 import regenIcon from '../assets/regen.svg';
@@ -32,7 +31,7 @@ class GameArea extends Component {
   }
 
   render() {
-    const {game, ui, uiActions, missilePopupActions, regenPopupActions, popups} = this.props;
+    const {game, ui, uiActions, missilePopupActions, regenPopupActions, theme} = this.props;
     const {players, me} = game;
     const playerInfoSize = _.partial(wrap, 18, 13);
 
@@ -107,4 +106,4 @@ function mapDispatchToProps(dispatch) {
   };
 }
 
-export default connect(({game, ui, popups}) => ({game, ui, popups}), mapDispatchToProps)(GameArea);
+export default connect(({game, ui, theme}) => ({game, ui, theme}), mapDispatchToProps)(GameArea);

@@ -2,9 +2,9 @@ import React, { Component, PropTypes } from 'react';
 import InlineSVG from 'svg-inline-react';
 import Radium from 'radium';
 import _ from 'lodash';
+import { connect } from 'react-redux';
 
 import * as styles from '../styles';
-import * as theme from '../theme';
 import NumberIcon from './NumberIcon';
 
 import blueManaIcon from '../assets/blueMana.svg';
@@ -13,10 +13,11 @@ import healthIcon from '../assets/health.svg';
 import deckIcon from '../assets/deck.svg';
 import shieldIcon from '../assets/shield.svg';
 
+@connect(({theme}) => ({theme}), {})
 @Radium
 export default class PlayerInfo extends Component {
   render() {
-    const {player, targetable, onClick} = this.props;
+    const {player, targetable, onClick, theme} = this.props;
 
     const containerStyle = {
       ...styles.gameComponent,
