@@ -7,11 +7,7 @@ import { connect } from 'react-redux';
 import * as styles from '../styles';
 import NumberIcon from './NumberIcon';
 
-import blueManaIcon from '../assets/blueMana.svg';
-import redManaIcon from '../assets/redMana.svg';
-import healthIcon from '../assets/health.svg';
-import deckIcon from '../assets/deck.svg';
-import shieldIcon from '../assets/shield.svg';
+import assets from '../assets';
 
 @connect(({theme}) => ({theme}), {})
 @Radium
@@ -29,6 +25,14 @@ export default class PlayerInfo extends Component {
       textAlign: 'center',
     };
 
+    const head = {
+      ...styles.gameComponent,
+      height: '1em',
+      background: theme.hpRedStr,
+      textAlign: 'center',
+    };
+    const body = {...styles.gameComponent, height: '76%', bottom: 0};
+
     const readyIndicatorStyle = {
       ...styles.gameComponent,
       background: player.ready ? theme.greenReadyStr : theme.redReadyStr,
@@ -39,43 +43,68 @@ export default class PlayerInfo extends Component {
     const iconsTop = _.partial(iconSize, _, 36);
     const iconsBottom = _.partial(iconSize, _, 68);
 
-    const black = _.constant('black');
-    const white = _.constant('white');
+    const icons = assets.icon;
+
+    const maxHp = 20;
+    const maxShield = 20;
+    const hpIndicator = {
+      ...styles.gameComponent,
+      width: `${player.hp / maxHp * 100}%`,
+      backgroundColor: theme.hpGreenStr
+    };
+    const shieldIndicator = {
+      ...styles.gameComponent,
+      width: `${player.shield / maxShield * 100}%`,
+      height: '50%',
+      backgroundColor: theme.purpleStr
+    };
+    const hpString = {
+      ...styles.gameComponent,
+      marginTop: '-0.1em',
+    }
+
+    const icon = (f, x, icon, value, textColor, iconColor, key) => {
+      return f(x,
+      <NumberIcon icon={icon} value={value}
+        textColor={textColor}
+        iconColor={iconColor}/>, x);
+    };
+
+    const xs = [4, 28, 52];//, 76];
+
+    const manaIcons = (type) => [
+      [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.speed, player.speed[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.armor, player.defence[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[`${type}C`]],
+    ];
 
     return (
       <div style={containerStyle} onClick={onClick}>
-        { player.name }
-
-        {
-          styles.wrapEm(0.5, 0.5, 90, 5, <div style={readyIndicatorStyle}></div>
-          )
-        }
-        {iconsTop(7.5,
-          <NumberIcon icon={deckIcon} value={player.deckSize}
-          textColor={black}
-          iconColor={white} /> )
-        }
-        {iconsTop(37.5,
-          <NumberIcon icon={shieldIcon} value={player.shield}
-          textColor={black}
-          iconColor={theme.purpleC} /> )
-        }
-        {iconsTop(67.5,
-          <NumberIcon icon={healthIcon} value={player.hp}
-          textColor={black}
-          iconColor={theme.healthC} /> )
-        }
-
-        {iconsBottom(7.5,
-          <NumberIcon icon={blueManaIcon} value={player.mana.blue}
-          textColor={black}
-          iconColor={theme.blueManaC} /> )
-        }
-        {iconsBottom(37.5,
-          <NumberIcon icon={redManaIcon} value={player.mana.red}
-          textColor={black}
-          iconColor={theme.redManaC} /> )
-        }
+        <div style={head}>
+          <div style={hpIndicator}/>
+          <div style={shieldIndicator}/>
+          <div style={hpString}>
+            {player.hp}/20 + {player.shield}
+          </div>
+        </div>
+        <div style={body}>
+          { player.name }
+          {
+            styles.wrapEm(0.5, 0.5, 90, 5, <div style={readyIndicatorStyle}></div>
+            )
+          }
+          {
+            xs.map((x, i) =>
+              icon(iconsTop, x, ...manaIcons('blue')[i])
+            )
+          }
+          {
+            xs.map((x, i) =>
+              icon(iconsBottom, x, ...manaIcons('red')[i])
+            )
+          }
+        </div>
       </div>
     );
   }

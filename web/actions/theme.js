@@ -35,10 +35,13 @@ var colors = {
   ...createVariants('greenReady', Color('#00ff00')),
   ...createVariants('redReady', Color('#ff0000')),
 
-  ...createVariants('blueMana', Color('#00b4ff')),
-  ...createVariants('redMana',  Color('#e62c00')),
+  mana: {
+    ...createVariants('blue', Color('#00b4ff')),
+    ...createVariants('red',  Color('#e62c00')),
+  },
 
-  ...createVariants('health', Color('#ff0000')),
+  ...createVariants('hpRed', Color('#aa0000')),
+  ...createVariants('hpGreen', Color('#00aa00')),
   ...createVariants('purple', Color('#A61FDE')),
 
   players: ['#ff8080', '#789cf0', '#b0de6f', '#cc66c0', '#5dbaab', '#f2ba79', '#8e71e3', '#6ed169'],

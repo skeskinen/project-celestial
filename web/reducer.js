@@ -17,6 +17,7 @@ const rootReducer = combineReducers({
   popups: multireducer({
     missile: popup,
     regen: popup,
+    ward: popup,
     planet: popup,
   }),
 });

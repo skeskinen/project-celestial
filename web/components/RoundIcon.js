@@ -7,13 +7,13 @@ import InlineSVG from 'svg-inline-react';
 
 @connect(({theme}) => ({theme}), {})
 @Radium
-export default class NumberIcon extends Component {
+export default class RoundIcon extends Component {
   render() {
     const {icon, iconColor, onClick, theme} = this.props;
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: theme.greyStr,
+      background: theme.blackStr,
       borderSize: '1px',
       borderStyle: 'solid',
       borderRadius: '50%',

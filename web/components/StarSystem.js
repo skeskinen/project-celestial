@@ -3,16 +3,12 @@ import * as styles from '../styles';
 import Radium from 'radium';
 import { connect } from 'react-redux';
 import _ from 'lodash';
-import { findDOMNode } from 'react-dom';
 
 import Popup from './Popup';
 import * as popupActionsRaw from '../actions/popup';
 import { multireducerBindActionCreators } from 'multireducer';
 
-import bluePlanet from '../assets/bluePlanet.png';
-import redPlanet from '../assets/redPlanet.png';
-import yellowPlanet from '../assets/yellowPlanet.png';
-import star from '../assets/star.png';
+import * as assets from '../assets';
 
 @Radium
 class StarSystem extends Component {
@@ -52,8 +48,6 @@ class StarSystem extends Component {
 
       popupActions.show();
 
-      var popup = this.refs.popup;
-
       const popupX = x > 50 ? x - this.popupW : x + this.planetSize;
       const popupY = y > 80 ? y - this.popupH : (y < 20 ? y + this.planetSize : y);
 
@@ -62,7 +56,7 @@ class StarSystem extends Component {
   }
 
   render() {
-    var { game: { planets, players, me }, popups } = this.props;
+    var { game: { planets, players, me } } = this.props;
     const myIndex = _.findIndex(players, {id: me.id});
 
     const style = {
@@ -108,18 +102,7 @@ class StarSystem extends Component {
           const ghostPoint = calcCircleLocation(p.phase + 1, p.speed);
           const ghostX = ghostPoint[0] * j / 2 + 50 - s / 2;
           const ghostY = ghostPoint[1] * j / 2 + 50 - s / 2;
-          var texture;
-          switch (p.color) {
-            case 'blue':
-              texture = bluePlanet;
-              break;
-            case 'red':
-              texture = redPlanet;
-              break;
-            case 'yellow':
-              texture = yellowPlanet;
-              break;
-          }
+          var texture = assets.planet[p.color];
           return <div key={i}>
             {styles.wrap(s, s, x, y,
                   <img src={texture} style={styles.gameComponent} onClick={this.planetClicked(p, x, y)} />)}
@@ -130,7 +113,7 @@ class StarSystem extends Component {
             </div>;
         })}
         {styles.wrap(this.planetSize + 9, this.planetSize + 9, 42, 42,
-              <img src={star} style={styles.gameComponent} />)
+              <img src={assets.star['basic']} style={styles.gameComponent} />)
         }
 
         <Popup multireducerKey='planet' x={this.state.popupX} y={this.state.popupY}

@@ -13,7 +13,7 @@ export default class NumberIcon extends Component {
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: theme.greyStr,
+      background: theme.blackStr,
       border: '1px',
       borderRadius: 4,
       color: textColor(value),

@@ -1,6 +1,9 @@
 import * as protocol from './protocol';
 import * as Player from './Player';
+import * as Effect from './Effect';
 import _ from 'lodash';
+
+import { deepSum, deepSubstraction } from './util';
 
 export default class Room {
   constructor() {
@@ -10,15 +13,14 @@ export default class Room {
     this.planets = [];
 
     this.effects = [];
+
+    this.runEffect = ::this.runEffect;
+    this.endTurn = ::this.endTurn;
   }
 
   turnEffects(i) {
     var ef = this.effects;
-    if (ef.length - 1 < i) {
-      for (var j = 0; j < i - ef.length + 1; j++) {
-        ef.push([]);
-      }
-    }
+    _.range(0, Math.max(0, i - ef.length + 1)).forEach(() => ef.push([]));
     return ef[i];
   }
 
@@ -57,7 +59,14 @@ export default class Room {
       const speedMult = _.sample(_.range(Math.floor(1 + i / 2), 2 + i));
       const speed = nPlayers * speedMult;
       var name = `${_.sample(possible)}${_.sample(possible).toLowerCase()} ${Math.floor(Math.random() * 99)}`;
-      this.planets.push({phase: _.sample(_.range(0, speed)), speed, color: _.sample(colors), name });
+      this.planets.push({
+        phase: _.sample(_.range(0, speed)),
+        speed,
+        color: _.sample(colors),
+        name,
+        bonus: {speed: {blue: 1}},
+        orderNumber: i,
+      });
     }
   }
 
@@ -69,22 +78,34 @@ export default class Room {
     });
   }
 
+  playerPlanets(p) {
+    const ppos = p.orderNumber;
+    const pAmount = this.players.length;
+    return _.filter(this.planets, (pl) => {
+      return Math.floor(pl.phase / pl.speed * pAmount) === ppos;
+    });
+  }
+
   start() {
     this.started = true;
     while (this.players.length < 3) {
       this.players.push(Player.dummy());
     }
     this.mkPlanets();
-    this.players.forEach(_.method('start'));
+    this.players.forEach((p, i) => p.start(i));
+    this.calcPlanetBonuses();
     this.pushStateUpdate();
   }
 
   spellCast(player, castInfo) {
+    if(player.dead)
+      return;
+
     castInfo.player = player;
+    player.ready = true;
 
     var spell;
 
-    player.ready = true;
     if (castInfo.spellType === protocol.SPELL_TYPE_SKILL)
       spell = _.get(player.skills, castInfo.id);
 
@@ -101,25 +122,69 @@ export default class Room {
       return false;
   }
 
+  calcPlanetBonuses() {
+    this.players.forEach(p => {
+      const { speed: prevSpeed, defence: prevDefence } = p.planetBonuses;
+      p.speed = deepSubstraction(p.speed, prevSpeed);
+      p.defence = deepSubstraction(p.defence, prevDefence);
+
+      const planets = this.playerPlanets(p);
+      var newBonus = _.reduce(planets, (acc, b) => deepSum(acc, b.bonus), {});
+
+      p.speed = deepSum(p.speed, newBonus.speed);
+      p.defence = deepSum(p.defence, newBonus.defence);
+
+      p.planetBonuses = newBonus;
+    });
+  }
+
   advanceTurn() {
     this.players.forEach(p => p.ready = false);
 
     var efs = this.turnEffects(0);
 
-    efs.push([() => {
-      this.sendLogLine(`Turn ${this.currentTurn} ended`);
+    efs = _.sortBy(efs, (e) => -e.priority());
+
+    this.players.forEach(p => p.prevTurnActingOrder = undefined);
+
+    efs.push(Effect.endOfTurn(() => {
+      this.sendLogLine(`Moving planets`);
       this.movePlanets();
+      this.calcPlanetBonuses();
+    }));
+
+    efs.push(Effect.endOfTurn(() => {
+      this.sendLogLine(`Turn ${this.currentTurn} ended`);
       this.currentTurn++;
-    }]);
+    }));
 
-    efs.forEach(e => {
-      e[0].apply(null, _.tail(e));
-    });
+    this.runEffect(efs, 1);
+  }
 
+  runEffect(es, order) {
+    const e = es.shift();
+    if(e.owningPlayer && e.owningPlayer.prevTurnActingOrder === undefined)
+      e.owningPlayer.prevTurnActingOrder = order++;
+    e.effect();
+    this.pushStateUpdate();
+    if(es.length === 0) {
+      this.endTurn();
+    } else {
+      setTimeout(this.runEffect, 1000, es, order);
+    }
+  }
+
+  endTurn() {
     this.effects.shift();
 
-    this.players.forEach(p => { //make bots ready
-      if(!p.ws) {
+    var alive = _.filter(this.players, {dead: false});
+    if (alive.length === 1)
+      this.sendLogLine(`${alive[0].name} Won!`);
+    else if (alive.length === 0)
+      this.sendLogLine(`Draw!`);
+
+    this.players.forEach(p => {
+      if(!p.ws || p.dead) {
         p.ready = true;
       }
     });

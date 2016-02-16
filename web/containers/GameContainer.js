@@ -63,7 +63,7 @@ class Home extends Component {
       marginTop = (windowHeight - newHeight) / 2;
     }
 
-    const fontNativeWidth = 800;
+    const fontNativeWidth = 1000;
 
     const panelStyle = {
       border: `${borderSize}px`,

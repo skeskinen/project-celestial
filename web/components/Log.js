@@ -17,14 +17,15 @@ class Log extends Component {
       color: 'white',
       padding: '0.4em',
       pointerEvents: 'none',
+      fontSize: '0.8em',
     };
 
-    const lines = _.takeRight(log.lines, 4);
+    const lines = _.takeRight(log.lines, 15);
 
     return (
       <div style={style}>
         { lines.map((l, i) => <div key={i}>
-            <span>{l}</span>
+            <span style={{whiteSpace: 'nowrap'}}>{l}</span>
           </div>
         )
         }

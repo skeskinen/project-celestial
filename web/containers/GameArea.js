@@ -11,10 +11,7 @@ import * as popupActionsRaw from '../actions/popup';
 import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, StarSystem } from '../components';
 import { wrap, wrapEm } from '../styles';
 
-import missileIcon from '../assets/magic-missile.svg';
-import regenIcon from '../assets/regen.svg';
-import blueManaIcon from '../assets/blueMana.svg';
-import redManaIcon from '../assets/redMana.svg';
+import * as assets from '../assets'
 
 class GameArea extends Component {
   constructor() {
@@ -31,16 +28,17 @@ class GameArea extends Component {
   }
 
   render() {
-    const {game, ui, uiActions, missilePopupActions, regenPopupActions, theme} = this.props;
+    const {game, ui, uiActions, popupActions, theme} = this.props;
     const {players, me} = game;
     const playerInfoSize = _.partial(wrap, 18, 13);
 
-    const skillIcon = _.partial(wrapEm, 3.6, 3.6, _, 87);
 
-    const enemyTargetable = _.includes([protocol.TARGET_PLAYER, protocol.TARGET_ENEMY], ui.targetMode);
+    const enemyTargetable = (p) =>
+      !p.dead && _.includes([protocol.TARGET_PLAYER, protocol.TARGET_ENEMY], ui.targetMode);
+
     const playerInfoOnClick = (player) => {
       return () => {
-        if (enemyTargetable) {
+        if (enemyTargetable(player)) {
           uiActions.selectedTarget(player.id);
         }
       };
@@ -49,18 +47,24 @@ class GameArea extends Component {
     const myIndex = _.findIndex(players, {id: me.id});
     const others = _.drop(players, myIndex + 1).concat(_.take(players, myIndex));
 
+    const skill = (skill, x) => <div>
+        {skillPopup(skill, x - 4)}
+        {skillIcon(x, <RoundIcon onClick={popupActions[skill].show}
+          icon={assets.icon[skill]} iconColor={theme.purpleStr}/>)}
+    </div>;
+    const skillIcon = _.partial(wrapEm, 4.6, 4.6, _, 87);
     const skillPopup = (skill, x) =>
         <Popup x={x} y={72} w={14} h={11} multireducerKey={skill}>
-          {wrapEm(3, 3, 5, 8,
+          {wrapEm(3.9, 3.9, 5, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'blue')}
-              icon={blueManaIcon} iconColor={theme.blueManaStr}/>)}
-          {wrapEm(3, 3, 53, 8,
+              icon={assets.icon.mana['blue']} iconColor={theme.mana['blueStr']}/>)}
+          {wrapEm(3.9, 3.9, 53, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'red')}
-              icon={redManaIcon} iconColor={theme.redManaStr}/>)}
+              icon={assets.icon.mana['red']} iconColor={theme.mana['redStr']}/>)}
         </Popup>;
 
     const enemyInfo = (p) => _.partial(playerInfoSize, _, _,
-      <PlayerInfo player={p} targetable={enemyTargetable}
+      <PlayerInfo player={p} targetable={enemyTargetable(p)}
         onClick={playerInfoOnClick(p)} />, p.id);
 
     var points = [];
@@ -77,8 +81,8 @@ class GameArea extends Component {
     return (
       <div>
         {wrap(100, 20, 0, 85, <BottomBar />)}
-        {wrapEm(23, 23, 27, 14, <StarSystem />)}
-        <div style={{pointerEvents: 'none'}}>{wrap(60, 16, 20, 65, <Log />)}</div>
+        {wrapEm(29, 29, 27, 14, <StarSystem />)}
+        <div style={{pointerEvents: 'none'}}>{wrap(26.5, 38, 0.5, 40, <Log />)}</div>
         {playerInfoSize(20, 86, <PlayerInfo player={me} targetable={false} />)}
         {
           others.map((p, i) => {
@@ -86,12 +90,9 @@ class GameArea extends Component {
             return enemyInfo(p)(point[0] + xOffset, point[1] + yOffset);
           })
         }
-        {skillPopup('missile', 46)}
-        {skillIcon(50, <RoundIcon onClick={missilePopupActions.show}
-          icon={missileIcon} iconColor={theme.purpleStr}/>)}
-        {skillPopup('regen', 54)}
-        {skillIcon(58, <RoundIcon onClick={regenPopupActions.show}
-          icon={regenIcon} iconColor={theme.purpleStr}/>)}
+        {skill('missile', 50)}
+        {skill('regen', 58)}
+        {skill('ward', 66)}
       </div>
     );
   }
@@ -101,8 +102,11 @@ function mapDispatchToProps(dispatch) {
   return {
     gameActions: bindActionCreators(gameActionsRaw, dispatch),
     uiActions: bindActionCreators(uiActionsRaw, dispatch),
-    missilePopupActions: multireducerBindActionCreators('missile', popupActionsRaw, dispatch),
-    regenPopupActions: multireducerBindActionCreators('regen', popupActionsRaw, dispatch),
+    popupActions: {
+      missile: multireducerBindActionCreators('missile', popupActionsRaw, dispatch),
+      regen: multireducerBindActionCreators('regen', popupActionsRaw, dispatch),
+      ward: multireducerBindActionCreators('ward', popupActionsRaw, dispatch),
+    }
   };
 }
 
