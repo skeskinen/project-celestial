@@ -87,8 +87,8 @@ class StarSystem extends Component {
 
     function planetBonusElement(bonus) {
       const byColor = (color) => {
-        const cf = theme.mana[`${color}C`];
-        const text = theme.textLightC;
+        const cf = theme.mana[color];
+        const text = theme.textLight;
         const icons = assets.icons;
         var toShow = [];
 
@@ -148,7 +148,7 @@ class StarSystem extends Component {
           return <div key={i}>
             {styles.wrap(s, s, x, y,
                   <img src={texture} style={styles.gameComponent} onClick={this.planetClicked(p, x, y)} />)}
-              <div style={{opacity:'0.2'}} key={`ghost ${i}`}>
+              <div style={{opacity:'0.2', pointerEvents: 'none'}} key={`ghost ${i}`}>
                 {styles.wrap(s, s, ghostX, ghostY,
                   <img src={texture} style={styles.gameComponent} />)}
               </div>
@@ -159,7 +159,7 @@ class StarSystem extends Component {
         }
 
         <Popup multireducerKey='planet' x={this.state.popupX} y={this.state.popupY}
-          w={this.popupW} h={this.popupH} bgColor={theme.blackStr} ref='popup'>
+          w={this.popupW} h={this.popupH} bgColor={theme.black} ref='popup'>
           { (() => {
             const p = this.state.popupPlanet;
             return <div>

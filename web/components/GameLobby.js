@@ -8,7 +8,7 @@ export default class GameLobby extends Component {
   render() {
     const {game, startGame, theme} = this.props;
     return (
-      <div style={{color: theme.textLightStr}}>
+      <div style={{color: theme.textLight}}>
         Players:
         <br/>
         {

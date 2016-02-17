@@ -17,7 +17,7 @@ export default class PlayerInfo extends Component {
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: targetable ? theme.targetRedStr : theme.moderateBlueStr,
+      background: targetable ? theme.targetRed : theme.moderateBlue,
       border: '2px',
       borderRadius: 4,
       color: 'white',
@@ -28,14 +28,14 @@ export default class PlayerInfo extends Component {
     const head = {
       ...styles.gameComponent,
       height: '1em',
-      background: theme.hpRedStr,
+      background: theme.hpRed,
       textAlign: 'center',
     };
     const body = {...styles.gameComponent, height: '76%', bottom: 0};
 
     const readyIndicatorStyle = {
       ...styles.gameComponent,
-      background: player.ready ? theme.greenReadyStr : theme.redReadyStr,
+      background: player.ready ? theme.greenReady : theme.redReady,
       borderRadius: '50%',
     };
 
@@ -46,17 +46,17 @@ export default class PlayerInfo extends Component {
     const icons = assets.icons;
 
     const maxHp = 20;
-    const maxShield = 20;
+    const maxShield = 5;
     const hpIndicator = {
       ...styles.gameComponent,
       width: player.hp < 0 ? '0' : `${player.hp / maxHp * 100}%`,
-      backgroundColor: theme.hpGreenStr
+      backgroundColor: theme.hpGreen
     };
     const shieldIndicator = {
       ...styles.gameComponent,
       width: `${player.shield / maxShield * 100}%`,
       height: '50%',
-      backgroundColor: theme.purpleStr
+      backgroundColor: theme.purple
     };
     const hpString = {
       ...styles.gameComponent,
@@ -73,10 +73,10 @@ export default class PlayerInfo extends Component {
     const xs = [4, 28, 52, 76];
 
     const manaIcons = (type) => [
-      [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.spellPower, player.attribs.spellPower[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.armor, player.attribs.defence[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.speed, player.attribs.speed[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[type]],
+      [icons.spellPower, player.attribs.spellPower[type], theme.textLightC, theme.mana[type]],
+      [icons.armor, player.attribs.defence[type], theme.textLightC, theme.mana[type]],
+      [icons.speed, player.attribs.speed[type], theme.textLightC, theme.mana[type]],
     ];
 
     return (

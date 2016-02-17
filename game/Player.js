@@ -7,8 +7,8 @@ import _ from 'lodash';
 export default class Player {
   constructor() {
     this.mana = {
-      blue: 1,
-      red: 1,
+      blue: 5,
+      red: 5,
     };
     this.hp = 20;
     this.shield = 3;
@@ -75,10 +75,13 @@ export default class Player {
   }
 
   takeDamage(obj, room) {
-    var s = (a, b) => a ? Math.max(a - b, 0) : 0;
+    var s = (a) => a ? a : 0;
+    var r = (a, b) => a ? Math.max(a - b, 0) : 0;
     const { blue, red } = obj;
     const { blue: blueD, red: redD  } = this.attribs.defence;
-    const total = s(blue, blueD) + s(red, redD);
+    var total = s(blue) + s(red);
+    const final = r(blue, blueD) + r(red, redD);
+    room.sendLogLine(`${total} points of damage, ${final} after reductions`);
     if (this.shield < total) {
       this.hp -= total - this.shield;
       this.shield = 0;
@@ -94,7 +97,7 @@ export default class Player {
   modShield(i) {
     this.shield += i;
     const s = this.shield;
-    this.shield = s > 20 ? 20 : (s < 0 ? 0 : s);
+    this.shield = s > 5 ? 5 : (s < 0 ? 0 : s);
   }
 
   paySpell(obj) {
@@ -102,6 +105,11 @@ export default class Player {
     const { blue, red } = obj;
     this.mana.blue -= s(blue);
     this.mana.red -= s(red);
+
+    const m = (v) => (v > 10 ? 10 : v);
+
+    this.mana.blue = m(this.mana.blue);
+    this.mana.red = m(this.mana.red);
   }
 
   checkMana(obj) {

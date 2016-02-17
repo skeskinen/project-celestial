@@ -33,3 +33,16 @@ export function wrapEm(width, height, left, top, elem, key, ref) {
     {elem}
   </div>);
 }
+
+export function wrapEmPos(width, height, left, top, elem, key, ref) {
+  const style = {
+    position: 'absolute',
+    left: `${left}em`,
+    top: `${top}em`,
+    width: `${width}em`,
+    height: `${height}em`,
+  };
+  return (<div style={style} key={key} ref={ref}>
+    {elem}
+  </div>);
+}

@@ -8,8 +8,8 @@ import * as protocol from '../../game/protocol';
 import * as gameActionsRaw from '../actions/game';
 import * as uiActionsRaw from '../actions/ui';
 import * as popupActionsRaw from '../actions/popup';
-import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, StarSystem } from '../components';
-import { wrap, wrapEm } from '../styles';
+import { PlayerInfo, BottomBar, RoundIcon, Popup, Log, StarSystem, NumberIcon } from '../components';
+import { wrap, wrapEm, wrapEmPos } from '../styles';
 
 import * as assets from '../assets'
 
@@ -44,24 +44,61 @@ class GameArea extends Component {
       };
     };
 
+    const icons = assets.icons;
+
     const myIndex = _.findIndex(players, {id: me.id});
     const others = _.drop(players, myIndex + 1).concat(_.take(players, myIndex));
 
     const skill = (skill, x) => <div>
         {skillPopup(skill, x - 4)}
         {skillIcon(x, <RoundIcon onClick={popupActions[skill].show}
-          icon={assets.icons[skill]} iconColor={theme.purpleStr}/>)}
+          icon={icons[skill]} iconColor={theme.purple}/>)}
     </div>;
     const skillIcon = _.partial(wrapEm, 4.6, 4.6, _, 87);
-    const skillPopup = (skill, x) =>
-        <Popup x={x} y={72} w={14} h={11} multireducerKey={skill}>
-          {wrapEm(3.9, 3.9, 5, 8,
+    const skillPopup = (skill, x) => {
+      const f = (icon, value, color, tc, afterText) => (x, y) =>
+        wrapEmPos(3.9, 1.3, x, y, <NumberIcon icon={icon} value={value}
+          textColor={tc} iconColor={color} afterText={afterText || ''} />, `${x}${y}`);
+
+      const byColor = (color) => {
+        const info = me.skills[skill][color].info;
+        const cf = theme.mana[color];
+        const tc = theme.textLight;
+        const icons = assets.icons;
+        var toShow = [];
+        const signedStr = (v) => v > 0 ? `+${v}` : v;
+        const enoughManaTextColor = (v) => v <= me.mana[color] ? theme.textLight : theme.targetRed;
+
+        if(info.cost[color] !== undefined) {
+          const manaCost = info.cost[color];
+          toShow.push( f(icons.mana[color], signedStr(-manaCost), cf, enoughManaTextColor(manaCost) ));
+        }
+        if(info.damage)
+          toShow.push( f(icons.spellPower, info.damage[color], cf, tc) );
+        if(info.shield)
+          toShow.push( f(icons.shield, signedStr(info.shield), cf, tc) );
+        if(info.buff) {
+          const b = info.buff;
+          if(b.attribs.defence)
+            toShow.push( f(icons.armor, signedStr(b.attribs.defence[color]), cf, tc, `(${b.duration})`) );
+          if(b.attribs.speed)
+            toShow.push( f(icons.speed, signedStr(b.attribs.speed[color]), cf, tc, `(${b.duration})`) );
+        }
+        return toShow;
+      };
+      const blue = byColor('blue'), red = byColor('red');
+      var height = 11 + blue.length * 3.14;
+      return <Popup x={x} y={84 - height} w={14} h={height} multireducerKey={skill}>
+          {wrapEmPos(3.9, 3.9, 0.3, 0.3,
             <RoundIcon onClick={this.selectedSkill(skill, 'blue')}
-              icon={assets.icons.mana['blue']} iconColor={theme.mana['blueStr']}/>)}
-          {wrapEm(3.9, 3.9, 53, 8,
+              icon={icons.mana['blue']} iconColor={theme.mana['blue']}/>)}
+          {blue.map((n, i) => n(0.3, 4.3 + i * 1.4))}
+          {wrapEmPos(3.9, 3.9, 4.5, 0.3,
             <RoundIcon onClick={this.selectedSkill(skill, 'red')}
-              icon={assets.icons.mana['red']} iconColor={theme.mana['redStr']}/>)}
+              icon={icons.mana['red']} iconColor={theme.mana['red']}/>)}
+          {red.map((n, i) => n(4.5, 4.3 + i * 1.4))}
         </Popup>;
+    };
 
     const enemyInfo = (p) => _.partial(playerInfoSize, _, _,
       <PlayerInfo player={p} targetable={enemyTargetable(p)}

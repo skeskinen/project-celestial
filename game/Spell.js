@@ -13,7 +13,7 @@ function mkMissile(color) {
     name: 'Magic missile',
     description: 'Basic damage spell',
     infoFn: (player, _room) => ({
-      cost: {[color]: 1},
+      cost: {[color]: 3},
       damage: {[color]: 1 + player.attribs.spellPower[color]},
     }),
   };
@@ -25,9 +25,9 @@ function mkMissile(color) {
       room.sendLogLine(`${p.name} casts ${missile.name} (${color})`);
       if (info.player.checkMana(cost)) {
         const targetPlayer = _.find(room.players, {id: info.target});
+        room.sendLogLine(`${p.name} hit ${targetPlayer.name} with missile`);
         targetPlayer.takeDamage(damage, room);
         p.paySpell(cost);
-        room.sendLogLine(`${p.name} hit ${targetPlayer.name} with missile`);
       } else
         manaCostFail(p, room);
     }, () => p.speedCheck(color, room)
@@ -48,13 +48,13 @@ function mkRegen(color) {
     description: 'Gain mana this turn',
     infoFn: (player, _room) => ({
       cost: {
-        [color]: -1 - player.attribs.spellPower[color]
+        [color]: Math.ceil(-2 - player.attribs.spellPower[color] / 2)
       },
       buff: {
-        duration: 2,
+        duration: 3,
         attribs: {
           speed: {
-            [color]: 3,
+            [color]: 5,
           },
         }
       }
@@ -67,9 +67,9 @@ function mkRegen(color) {
       const { cost, buff } = regen.infoFn(p, room);
       room.sendLogLine(`${p.name} casts ${regen.name} (${color})`);
       p.paySpell(cost);
-      room.sendLogLine(`${p.name} gained speed buff (${buff.duration} turns)`);
+      room.sendLogLine(`${p.name} gained speed buff`);
       p.attribs = util.deepSum(p.attribs, buff.attribs);
-      room.turnEffects(2).push(Effect.buffExpire(buffExpire(room, info)));
+      room.turnEffects(buff.duration - 1).push(Effect.buffExpire(buffExpire(room, info)));
     }, () => p.speedCheck(color, room)
     ];
   };
@@ -102,7 +102,7 @@ function mkWard(color) {
         duration: 2,
         attribs: {
           defence: {
-            [color]: 1,
+            [color]: Math.floor(1 + player.attribs.spellPower[color] / 2),
           },
         },
       },
@@ -116,11 +116,11 @@ function mkWard(color) {
       room.sendLogLine(`${p.name} casts ${ward.name} (${color})`);
       if (info.player.checkMana(cost)) {
         p.paySpell(cost);
-        room.sendLogLine(`${p.name} gained defence buff (${buff.duration} turns)`);
+        room.sendLogLine(`${p.name} gained defence buff`);
         p.attribs = util.deepSum(p.attribs, buff.attribs);
         room.sendLogLine(`${p.name} gained ${shield} point${shield === 1 ? '' : 's'} of shield`);
         p.modShield(shield);
-        room.turnEffects(2).push(Effect.buffExpire(buffExpire(room, info)));
+        room.turnEffects(buff.duration - 1).push(Effect.buffExpire(buffExpire(room, info)));
       } else
         manaCostFail(p, room);
     }, () => p.speedCheck(color, room)

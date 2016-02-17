@@ -3,8 +3,7 @@ import _ from 'lodash';
 
 function createVariants(name, c) {
   return {
-    [name + 'Str']: c.rgbaString(),
-    [name + 'C']: _.constant(c.rgbaString()),
+    [name]: c.rgbaString(),
     [name + 'Raw']: c,
   };
 }
@@ -23,7 +22,7 @@ var colors = {
   ...createVariants('moderateBlue', Color('#244665')),
   ...createVariants('targetRed',  Color('#d61c00')),
 
-  ...createVariants('textLight', Color('#BEC0C1')),
+  ...createVariants('textLight', Color('#DEE0E1')),
 
   ...createVariants('grey', grey),
   bottomBarGrey: grey.clone().alpha(0.4).rgbaString(),

@@ -23,7 +23,7 @@ class Popup extends Component {
 
     const style = {
       ...styles.gameComponent,
-      background: bgColor ? bgColor : theme.greyStr,
+      background: bgColor ? bgColor : theme.grey,
       border: '2px',
       borderRadius: 4,
       color: 'white',

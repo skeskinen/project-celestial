@@ -13,7 +13,7 @@ export default class RoundIcon extends Component {
 
     const containerStyle = {
       ...styles.gameComponent,
-      background: theme.blackStr,
+      background: theme.black,
       borderSize: '1px',
       borderStyle: 'solid',
       borderRadius: '50%',

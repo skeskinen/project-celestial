@@ -18,8 +18,8 @@ export function calcPlanetBonuses(room) {
 
 export function mkPlanets(room) {
   const nPlayers = room.players.length;
-  return [closePlanet, closePlanet,
-    midPlanet, midPlanet,
+  return [closePlanet, closePlanet, closePlanet,
+    midPlanet, midPlanet, midPlanet,
     outerPlanet, outerPlanet].map((p, i) => p(nPlayers, i));
 }
 
@@ -32,15 +32,13 @@ const closeTypes = [
   {
     type: 'red.ca',
     bonus: {
-      speed: {red: 1},
-      spellPower: {red: 1}
+      speed: {red: 2},
     },
   },
   {
     type: 'blue.ca',
     bonus: {
-      speed: {blue: 1},
-      spellPower: {blue: 1}
+      speed: {blue: 2},
     },
   },
 ];
@@ -78,8 +76,8 @@ const midTypes = [
     type: 'brown.ma',
     bonus: {
       defence: {
-        blue: 3,
-        red: 3,
+        blue: 2,
+        red: 2,
       },
     },
   },

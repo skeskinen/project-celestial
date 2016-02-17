@@ -15,7 +15,7 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(path.join(__dirname, 'index.html'));
   });
 
-  var port = Number(process.env.PORT || 3001);
+  var port = Number(process.env.PORT || 80);
   app.listen(port, function() {
     console.log(`server running at http://localhost:${port}`);
   });
@@ -39,7 +39,7 @@ if (process.env.NODE_ENV === 'production') {
   //   res.sendFile(path.join(__dirname, 'index.html'));
   // });
 
-  app.listen(3000, 'localhost', function(err) {
+  app.listen(3000, '0.0.0.0', function(err) {
     if (err) {
       console.log(err);
       return;
