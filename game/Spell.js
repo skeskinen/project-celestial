@@ -1,25 +1,35 @@
 import * as protocol from './protocol';
 import _ from 'lodash';
 import * as Effect from './Effect';
+import * as util from './util';
+
+function manaCostFail(p, room) {
+  room.sendLogLine(`${p.name}: not enough mana!`);
+}
 
 function mkMissile(color) {
   var missile = {
-    cost: {[color]: 1},
-    damage: {[color]: 1},
-    target: protocol.TARGET_ENEMY,
+    targetType: protocol.TARGET_ENEMY,
     name: 'Magic missile',
     description: 'Basic damage spell',
+    infoFn: (player, _room) => ({
+      cost: {[color]: 1},
+      damage: {[color]: 1 + player.attribs.spellPower[color]},
+    }),
   };
   const main = (room, info) => {
     const p = info.player;
     return [() => {
-      if (info.player.checkMana(missile.cost)) {
-        const p = info.player;
+      const p = info.player;
+      const { cost, damage } = missile.infoFn(p, room);
+      room.sendLogLine(`${p.name} casts ${missile.name} (${color})`);
+      if (info.player.checkMana(cost)) {
         const targetPlayer = _.find(room.players, {id: info.target});
-        targetPlayer.takeDamage(missile.damage, room);
-        p.paySpell(missile.cost);
-        room.sendLogLine(`${p.name} hit ${targetPlayer.name} with missile (${color})`);
-      }
+        targetPlayer.takeDamage(damage, room);
+        p.paySpell(cost);
+        room.sendLogLine(`${p.name} hit ${targetPlayer.name} with missile`);
+      } else
+        manaCostFail(p, room);
     }, () => p.speedCheck(color, room)
     ];
   };
@@ -33,28 +43,43 @@ function mkRegen(color) {
   var regen = {
     cost: {[color]: -1},
     damage: {},
-    target: protocol.TARGET_NONE,
+    targetType: protocol.TARGET_NONE,
     name: 'Mana regen',
     description: 'Gain mana this turn',
+    infoFn: (player, _room) => ({
+      cost: {
+        [color]: -1 - player.attribs.spellPower[color]
+      },
+      buff: {
+        duration: 2,
+        attribs: {
+          speed: {
+            [color]: 3,
+          },
+        }
+      }
+    }),
   };
 
   const main = (room, info) => {
     const p = info.player;
     return [() => {
-      if (info.player.checkMana(regen.cost)) {
-        p.paySpell(regen.cost);
-        room.sendLogLine(`${p.name} used mana regen (${color})`);
-        room.sendLogLine(`${p.name} gained speed buff (2 turns)`);
-        p.speed[color] += 3;
-        room.turnEffects(2).push(Effect.buffExpire(buffExpire(room, info)));
-      }
+      const { cost, buff } = regen.infoFn(p, room);
+      room.sendLogLine(`${p.name} casts ${regen.name} (${color})`);
+      p.paySpell(cost);
+      room.sendLogLine(`${p.name} gained speed buff (${buff.duration} turns)`);
+      p.attribs = util.deepSum(p.attribs, buff.attribs);
+      room.turnEffects(2).push(Effect.buffExpire(buffExpire(room, info)));
     }, () => p.speedCheck(color, room)
     ];
   };
-  const buffExpire = (room, info) => () => {
+  const buffExpire = (room, info) => {
     const p = info.player;
-    room.sendLogLine(`${p.name} lost speed buff`);
-    p.speed[color] -= 3;
+    const { buff } = regen.infoFn(p, room);
+    return () => {
+      room.sendLogLine(`${p.name} lost speed buff`);
+      p.attribs = util.deepSubstraction(p.attribs, buff.attribs);
+    };
   };
   regen.mkEffects = (room, info) => {
     room.turnEffects(0).push(Effect.spell(main(room, info), info.player));
@@ -66,34 +91,65 @@ function mkWard(color) {
   var ward = {
     cost: {[color]: 1},
     damage: {},
-    target: protocol.TARGET_NONE,
+    targetType: protocol.TARGET_NONE,
     name: 'Spell ward',
     description: 'Basic defensive spell',
+    infoFn: (player, _room) => ({
+      cost: {
+        [color]: 1
+      },
+      buff: {
+        duration: 2,
+        attribs: {
+          defence: {
+            [color]: 1,
+          },
+        },
+      },
+      shield: 1,
+    }),
   };
   const main = (room, info) => {
     const p = info.player;
     return [() => {
-      if (info.player.checkMana(ward.cost)) {
-        p.paySpell(ward.cost);
-        room.sendLogLine(`${p.name} used spell ward (${color})`);
-        room.sendLogLine(`${p.name} gained defence buff (2 turns)`);
-        p.defence[color] += 1;
-        p.modShield(1);
+      const { cost, buff, shield } = ward.infoFn(p, room);
+      room.sendLogLine(`${p.name} casts ${ward.name} (${color})`);
+      if (info.player.checkMana(cost)) {
+        p.paySpell(cost);
+        room.sendLogLine(`${p.name} gained defence buff (${buff.duration} turns)`);
+        p.attribs = util.deepSum(p.attribs, buff.attribs);
+        room.sendLogLine(`${p.name} gained ${shield} point${shield === 1 ? '' : 's'} of shield`);
+        p.modShield(shield);
         room.turnEffects(2).push(Effect.buffExpire(buffExpire(room, info)));
-      }
+      } else
+        manaCostFail(p, room);
     }, () => p.speedCheck(color, room)
     ];
   };
-  const buffExpire = (room, info) => () => {
+  const buffExpire = (room, info) => {
     const p = info.player;
-    room.sendLogLine(`${p.name} lost defence buff`);
-    p.defence[color] -= 1;
+    const { buff } = ward.infoFn(p, room);
+    return () => {
+      room.sendLogLine(`${p.name} lost defence buff`);
+      p.attribs = util.deepSubstraction(p.attribs, buff.attribs);
+    };
   };
   ward.mkEffects = (room, info) => {
     room.turnEffects(0).push(Effect.spell(main(room, info), info.player));
   };
   return ward;
 }
+
+export const pass = {
+  mkEffects: (room, info) => {
+    const p = info.player;
+    room.turnEffects(0).push(Effect.spell([() => {
+      room.sendLogLine(`${p.name} passes`);
+    }, () => Effect.constantSpeed(10)
+    ], info.player));
+  },
+  infoFn: () => ({}),
+};
 
 export const defaultSkills = {
   missile: {
@@ -110,11 +166,10 @@ export const defaultSkills = {
   }
 };
 
-export function toJSON(spell) {
+export function toJSON(spell, player, room) {
   return {
-    cost: spell.cost,
-    damage: spell.damage,
-    target: spell.target,
+    info: spell.infoFn(player, room),
+    targetType: spell.targetType,
     name: spell.name,
     description: spell.description,
   };

@@ -40,8 +40,8 @@ export function selectedSpell(spell) {
 export function selectedSkill(skillName, color) {
   return (dispatch, getState) => {
     const state = getState();
-    const skill = state.game.players[0].skills[skillName][color];
-    switch (skill.target) {
+    const skill = state.game.me.skills[skillName][color];
+    switch (skill.targetType) {
       case protocol.TARGET_NONE:
         dispatch(gameActions.castSpell({
           spellType: protocol.SPELL_TYPE_SKILL,

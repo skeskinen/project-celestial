@@ -1,18 +1,17 @@
 import _ from 'lodash';
 
 function deep(a, b, fn) {
-  a = _.cloneDeep(a);
-  return deepM(a, b, fn);
+  return deepM(_.cloneDeep(a), b, fn);
 }
 
 function deepM(a, b, fn) {
   return _.assignWith(a, b, (j, k) => {
-    var oJ = _.isObject(j);
-    var oK = _.isObject(k);
-    if(oJ && oK)
-      return deepSum(j, k);
-    else if(!oJ && !oK)
+    if(_.isObject(j) && _.isObject(k)) {
+      return deepM(j, k, fn);
+    }
+    else if(_.isNumber(j) && _.isNumber(k)) {
       return fn(j, k);
+    }
     else {
       return j !== undefined ? j : k;
     }
@@ -34,3 +33,5 @@ export function deepSumM(a, b) {
 export function deepSubstractionM(a, b) {
   return deepM(a, b, (j, k) => j - k);
 }
+
+export const ordinals = ['first', 'second', 'third', 'fourth', 'fifth', 'sixth', 'seventh', 'eighth'];

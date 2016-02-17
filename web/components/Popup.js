@@ -19,11 +19,11 @@ class Popup extends Component {
   }
 
   render() {
-    const {children, popup, x, y, w, h, theme} = this.props;
+    const {children, popup, x, y, w, h, theme, bgColor} = this.props;
 
     const style = {
       ...styles.gameComponent,
-      background: theme.greyStr,
+      background: bgColor ? bgColor : theme.greyStr,
       border: '2px',
       borderRadius: 4,
       color: 'white',
@@ -31,7 +31,6 @@ class Popup extends Component {
       top: `${y}%`,
       width: `${w}%`,
       height: `${h}%`,
-      textAlign: 'center',
 
       display: popup.visible ? 'block' : 'none',
     };

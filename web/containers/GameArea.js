@@ -50,17 +50,17 @@ class GameArea extends Component {
     const skill = (skill, x) => <div>
         {skillPopup(skill, x - 4)}
         {skillIcon(x, <RoundIcon onClick={popupActions[skill].show}
-          icon={assets.icon[skill]} iconColor={theme.purpleStr}/>)}
+          icon={assets.icons[skill]} iconColor={theme.purpleStr}/>)}
     </div>;
     const skillIcon = _.partial(wrapEm, 4.6, 4.6, _, 87);
     const skillPopup = (skill, x) =>
         <Popup x={x} y={72} w={14} h={11} multireducerKey={skill}>
           {wrapEm(3.9, 3.9, 5, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'blue')}
-              icon={assets.icon.mana['blue']} iconColor={theme.mana['blueStr']}/>)}
+              icon={assets.icons.mana['blue']} iconColor={theme.mana['blueStr']}/>)}
           {wrapEm(3.9, 3.9, 53, 8,
             <RoundIcon onClick={this.selectedSkill(skill, 'red')}
-              icon={assets.icon.mana['red']} iconColor={theme.mana['redStr']}/>)}
+              icon={assets.icons.mana['red']} iconColor={theme.mana['redStr']}/>)}
         </Popup>;
 
     const enemyInfo = (p) => _.partial(playerInfoSize, _, _,
@@ -69,7 +69,7 @@ class GameArea extends Component {
 
     var points = [];
     var numberOfPoints = others.length + 1;
-    var angleIncrement = 2 * Math.PI / numberOfPoints;
+    var angleIncrement = -2 * Math.PI / numberOfPoints;
     var circleRadius = 40;
     const start = Math.PI * 3 / 2;
     for (var i = 0; i < numberOfPoints; i++) {

@@ -43,13 +43,13 @@ export default class PlayerInfo extends Component {
     const iconsTop = _.partial(iconSize, _, 36);
     const iconsBottom = _.partial(iconSize, _, 68);
 
-    const icons = assets.icon;
+    const icons = assets.icons;
 
     const maxHp = 20;
     const maxShield = 20;
     const hpIndicator = {
       ...styles.gameComponent,
-      width: `${player.hp / maxHp * 100}%`,
+      width: player.hp < 0 ? '0' : `${player.hp / maxHp * 100}%`,
       backgroundColor: theme.hpGreenStr
     };
     const shieldIndicator = {
@@ -61,22 +61,22 @@ export default class PlayerInfo extends Component {
     const hpString = {
       ...styles.gameComponent,
       marginTop: '-0.1em',
-    }
+    };
 
-    const icon = (f, x, icon, value, textColor, iconColor, key) => {
+    const icon = (f, x, icon, value, textColor, iconColor) => {
       return f(x,
       <NumberIcon icon={icon} value={value}
         textColor={textColor}
         iconColor={iconColor}/>, x);
     };
 
-    const xs = [4, 28, 52];//, 76];
+    const xs = [4, 28, 52, 76];
 
     const manaIcons = (type) => [
       [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.speed, player.speed[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.armor, player.defence[type], theme.textLightC, theme.mana[`${type}C`]],
-      [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.spellPower, player.attribs.spellPower[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.armor, player.attribs.defence[type], theme.textLightC, theme.mana[`${type}C`]],
+      [icons.speed, player.attribs.speed[type], theme.textLightC, theme.mana[`${type}C`]],
     ];
 
     return (

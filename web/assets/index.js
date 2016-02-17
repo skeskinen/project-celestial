@@ -1,5 +1,5 @@
 module.exports = {
-  icon: {
+  icons: {
     missile: require('./magic-missile.svg'),
     regen: require('./regen.svg'),
     ward: require('./ward.svg'),
@@ -12,13 +12,24 @@ module.exports = {
     health: require('./health.svg'),
     armor: require('./armor.svg'),
     speed: require('./speed.svg'),
+    spellPower: require('./spell-power.svg'),
   },
-  planet: {
-    blue: require('./bluePlanet.png'),
-    red: require('./redPlanet.png'),
-    yellow: require('./yellowPlanet.png'),
+  planets: {
+    blue: {
+      ca: require('./planets/blue/ca.png'),
+      ma: require('./planets/blue/ma.png'),
+      oa: require('./planets/blue/oa.png'),
+    },
+    red: {
+      ca: require('./planets/red/ca.png'),
+      ma: require('./planets/red/ma.png'),
+      oa: require('./planets/red/oa.png'),
+    },
+    brown: {
+      ma: require('./planets/brown/ma.png'),
+    }
   },
-  star: {
+  stars: {
     basic: require('./star.png'),
   },
 };

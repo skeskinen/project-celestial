@@ -1,5 +1,7 @@
 import * as protocol from './protocol';
 import * as Spell from './Spell';
+import * as Effect from './Effect';
+import * as Planet from './Planet';
 import _ from 'lodash';
 
 export default class Player {
@@ -8,18 +10,24 @@ export default class Player {
       blue: 1,
       red: 1,
     };
-    this.speed = {
-      blue: 0,
-      red: 0,
-    };
-    this.defence = {
-      blue: 0,
-      red: 0,
-    };
-    this.hp = 2;
+    this.hp = 20;
     this.shield = 3;
     this.planetBonuses = {
 
+    };
+    this.attribs = {
+      speed: {
+        blue: 0,
+        red: 0,
+      },
+      defence: {
+        blue: 0,
+        red: 0,
+      },
+      spellPower: {
+        blue: 0,
+        red: 0,
+      }
     };
     this.deckSize = 0;
     this.cards = [];
@@ -30,22 +38,27 @@ export default class Player {
     this.prevTurnActingOrder = undefined;
   }
 
-  toJSON() {
-    return {
+  toJSON(completeInfo, room) {
+    var json =  {
       name: this.name,
       id: this.id,
       mana: this.mana,
-      speed: this.speed,
-      defence: this.defence,
+      attribs: this.attribs,
       hp: this.hp,
       shield: this.shield,
       deckSize: this.deckSize,
-      cards: _.map(this.cards, Spell.toJSON),
-      skills: _.mapValues(this.skills, _.partial(_.mapValues, _, Spell.toJSON)),
       ready: this.ready,
       dead: this.dead,
       orderNumber: this.orderNumber,
     };
+    if (completeInfo) {
+      return {
+        ...json,
+        cards: _.map(this.cards, _.partial(Spell.toJSON, _, this, room)),
+        skills: _.mapValues(this.skills, _.partial(_.mapValues, _, _.partial(Spell.toJSON, _, this, room))),
+      };
+    }
+    return json;
   }
 
   start(i) {
@@ -54,20 +67,17 @@ export default class Player {
   }
 
   speedCheck(color, room) {
-    const speedFactor = this.speed[color] * 10000;
-    const pls = room.playerPlanets(this);
-    const maxPlanets = 100;
-    const planetsFactor = pls.length ? (maxPlanets - pls[0].orderNumber) * 10 : 0;
-    const maxPlayers = 15;
-    const prevTurnFactor = maxPlayers - this.prevTurnActingOrder;
-    const final = speedFactor + planetsFactor + prevTurnFactor;
-    return final;
+    const speed = this.attribs.speed[color];
+    const pls = Planet.playerPlanets(room, this);
+    const firstPlanet = pls.length ? Planet.playerPlanets(room, this)[0].orderNumber : undefined;
+
+    return Effect.calcPriority(speed, firstPlanet, this.prevTurnActingOrder);
   }
 
   takeDamage(obj, room) {
     var s = (a, b) => a ? Math.max(a - b, 0) : 0;
     const { blue, red } = obj;
-    const { blue: blueD, red: redD  } = this.defence;
+    const { blue: blueD, red: redD  } = this.attribs.defence;
     const total = s(blue, blueD) + s(red, redD);
     if (this.shield < total) {
       this.hp -= total - this.shield;
@@ -109,10 +119,9 @@ export function fromSocketNameId(ws, name, id) {
   return p;
 }
 
-export function dummy() {
+export function dummy(i) {
   var p = new Player();
-  p.name = 'Dummy';
+  p.name = 'Dummy ' + i;
   p.id = global.clientIdCounter++;
-  p.ready = true;
   return p;
 }

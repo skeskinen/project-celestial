@@ -9,6 +9,7 @@ import * as popupActionsRaw from '../actions/popup';
 import { multireducerBindActionCreators } from 'multireducer';
 
 import * as assets from '../assets';
+import NumberIcon from './NumberIcon';
 
 @Radium
 class StarSystem extends Component {
@@ -56,7 +57,7 @@ class StarSystem extends Component {
   }
 
   render() {
-    var { game: { planets, players, me } } = this.props;
+    var { game: { planets, players, me }, theme } = this.props;
     const myIndex = _.findIndex(players, {id: me.id});
 
     const style = {
@@ -84,6 +85,47 @@ class StarSystem extends Component {
       return [x, y];
     }
 
+    function planetBonusElement(bonus) {
+      const byColor = (color) => {
+        const cf = theme.mana[`${color}C`];
+        const text = theme.textLightC;
+        const icons = assets.icons;
+        var toShow = [];
+
+        if(bonus.speed && bonus.speed[color])
+          toShow.push(icon(icons.speed, bonus.speed[color], text, cf));
+        if(bonus.defence && bonus.defence[color])
+          toShow.push(icon(icons.armor, bonus.defence[color], text, cf));
+        if(bonus.spellPower && bonus.spellPower[color])
+          toShow.push(icon(icons.spellPower, bonus.spellPower[color], text, cf));
+        return toShow;
+      };
+      const icon = (icon, value, textColor, iconColor) => {
+        if (value > 0) value = `+${value}`;
+        return (x, y) => styles.wrapEm(2.4, 1.2, x, y, <NumberIcon icon={icon} value={value}
+          textColor={textColor}
+          iconColor={iconColor}/>, `${x}${y}`);
+      };
+
+      const showList = (is) => {
+        var y = 20;
+        var x = 5;
+        return is.map(i => {
+          var r = i(x, y);
+          y += 25;
+          if (y > 80) {
+            y = 20;
+            x = 50;
+          }
+          return r;
+        });
+      };
+      return <div>
+        {showList(byColor('blue').concat(byColor('red')))}
+        {/*byColor('red')*/}
+      </div>;
+    }
+
     return (
       <div style={style}>
         <canvas style={{...styles.gameComponent, opacity: '0.3'}} ref='canvas' width={1000} height={1000}/>
@@ -102,25 +144,28 @@ class StarSystem extends Component {
           const ghostPoint = calcCircleLocation(p.phase + 1, p.speed);
           const ghostX = ghostPoint[0] * j / 2 + 50 - s / 2;
           const ghostY = ghostPoint[1] * j / 2 + 50 - s / 2;
-          var texture = assets.planet[p.color];
+          var texture = _.property(p.type)(assets.planets);
           return <div key={i}>
             {styles.wrap(s, s, x, y,
                   <img src={texture} style={styles.gameComponent} onClick={this.planetClicked(p, x, y)} />)}
-              <div style={{opacity:'0.5'}} key={`ghost ${i}`}>
+              <div style={{opacity:'0.2'}} key={`ghost ${i}`}>
                 {styles.wrap(s, s, ghostX, ghostY,
                   <img src={texture} style={styles.gameComponent} />)}
               </div>
             </div>;
         })}
         {styles.wrap(this.planetSize + 9, this.planetSize + 9, 42, 42,
-              <img src={assets.star['basic']} style={styles.gameComponent} />)
+              <img src={assets.stars['basic']} style={styles.gameComponent} />)
         }
 
         <Popup multireducerKey='planet' x={this.state.popupX} y={this.state.popupY}
-          w={this.popupW} h={this.popupH} ref='popup'>
+          w={this.popupW} h={this.popupH} bgColor={theme.blackStr} ref='popup'>
           { (() => {
             const p = this.state.popupPlanet;
-            return <span>{p ? p.name : ''}</span>;
+            return <div>
+              <div style={{textAlign: 'center'}}>{p ? p.name : ''}</div>
+              {p ? planetBonusElement(p.bonus) : null}
+            </div>;
           })()}
         </Popup>
       </div>

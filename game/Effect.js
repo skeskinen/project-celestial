@@ -8,6 +8,21 @@ export default class Effect {
   }
 }
 
+export const speedMult = 10000;
+const maxPlanets = 100;
+const maxPlayers = 15;
+
+export function calcPriority(speed, closestPlanet, lastTurnOrder) {
+  const speedFactor = speed * speedMult;
+  const planetsFactor = closestPlanet !== undefined ? (maxPlanets - closestPlanet) * 10 : 0;
+  const prevTurnFactor = lastTurnOrder !== undefined ? maxPlayers - lastTurnOrder : 0;
+  return speedFactor + planetsFactor + prevTurnFactor;
+}
+
+export function constantSpeed(speed) {
+  return calcPriority(speed);
+}
+
 export function endOfTurn(fn) {
   return new Effect(fn, _.constant(0));
 }
