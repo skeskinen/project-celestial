@@ -1,18 +1,24 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
+import { connect } from 'react-redux';
 
+@connect(({theme}) => ({theme}), {})
 @Radium
 export default class GameLobby extends Component {
   render() {
-    const {game, startGame} = this.props;
+    const {game, startGame, theme} = this.props;
     return (
-      <div>
+      <div style={{color: theme.textLightStr}}>
         Players:
         <br/>
         {
           game.players ? game.players.map((p) =>
             <div key={p.id}>
-              {p.name}
+              <ul>
+                <li>
+                  {p.name}
+                </li>
+              </ul>
               <br/>
             </div>
           ) : null
