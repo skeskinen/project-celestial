@@ -12,7 +12,8 @@ import ApiClient from './ApiClient';
 import './background';
 
 const client = new ApiClient();
-const ws = window.ws = new WebSocket('ws://localhost:8080');
+const wsUrl = 'ws://' + window.location.host.split(':')[0] + ':8080';
+const ws = window.ws = new WebSocket(wsUrl);
 
 const store = configureStore(browserHistory, client);
 
