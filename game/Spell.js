@@ -99,7 +99,7 @@ function mkWard(color) {
         [color]: 1
       },
       buff: {
-        duration: 2,
+        duration: 3,
         attribs: {
           defence: {
             [color]: Math.floor(1 + player.attribs.spellPower[color] / 2),
