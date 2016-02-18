@@ -7,8 +7,10 @@
   "scripts": {
     "web-dev": "concurrent --kill-others \"node web/webpack/dev.server\" \"node web/main\"",
     "web-start": "node web/main.js",
-    "web-build": "webpack --verbose --colors --config web/webpack/production.js",
-    "game-start": "node game/main.js"
+    "game-start": "node game/main.js",
+    "build": "NODE_ENV=production webpack --verbose --colors --config web/webpack/production.js",
+    "start": "concurrent --kill-others \"node web/main\" \"node game/main\"",
+    "start-prod": "NODE_ENV=production concurrent --kill-others \"node web/main\" \"node game/main\""
   },
   "author": "Santtu Keskinen <santtu.keskinen@gmail.com>",
   "license": "GPL-3.0",
