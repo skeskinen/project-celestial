@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import * as protocol from './protocol';
 import Room from './Room';
-import * as Player from './Player';
+import Player from './Player';
 
 var WebSocketServer = require('ws').Server
   , wss = new WebSocketServer({ port: 8080 });
@@ -21,8 +21,7 @@ function openRoom() {
   }
 }
 
-var clients = [];
-global.clientIdCounter = 0;
+var players = [];
 
 wss.broadcast = function broadcast(data) {
   wss.clients.forEach(function each(client) {
@@ -31,16 +30,16 @@ wss.broadcast = function broadcast(data) {
 };
 
 wss.on('connection', function(ws) {
-  var id = global.clientIdCounter++;
-  clients[id] = ws;
-  var room, player;
+  var player = new Player(ws);
+  players[player.id] = player;
+  var room;
 
   ws.on('message', function(message) {
     var msg = JSON.parse(message);
     switch (msg.type) {
       case protocol.NAME:
+        player.name = msg.data;
         room = openRoom();
-        player = Player.fromSocketNameId(ws, msg.data, id);
         room.addPlayer(player);
         break;
       case protocol.START_GAME:

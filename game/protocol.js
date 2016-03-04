@@ -9,7 +9,3 @@ export const CAST_SPELL = 'game/CAST_SPELL';
 export const SPELL_TYPE_SKILL = 'game/spell_type_skill';
 export const SPELL_TYPE_CARD = 'game/spell_type_card';
 export const SPELL_TYPE_PASS = 'game/spell_type_pass';
-
-export const TARGET_ENEMY = 'TARGET_ENEMY';
-export const TARGET_PLAYER = 'TARGET_PLAYER';
-export const TARGET_NONE = 'TARGET_NONE';

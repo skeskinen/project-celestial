@@ -2,11 +2,10 @@ import React, { Component, PropTypes } from 'react';
 import * as styles from '../styles';
 import Radium from 'radium';
 import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
 import _ from 'lodash';
 
 import Popup from './Popup';
-import * as popupActionsRaw from '../actions/popup';
-import { multireducerBindActionCreators } from 'multireducer';
 
 import * as assets from '../assets';
 import NumberIcon from './NumberIcon';
@@ -175,8 +174,8 @@ class StarSystem extends Component {
 
 function mapDispatchToProps(dispatch) {
   return {
-    popupActions: multireducerBindActionCreators('planet', popupActionsRaw, dispatch),
+    uiActions: bindActionCreators(uiActionsRaw, dispatch),
   };
 }
 
-export default connect(({game, popups, theme}) => ({game, popups, theme}), mapDispatchToProps)(StarSystem);
+export default connect(({game, theme}) => ({game, theme}), mapDispatchToProps)(StarSystem);

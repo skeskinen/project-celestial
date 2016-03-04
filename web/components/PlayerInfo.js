@@ -74,9 +74,9 @@ export default class PlayerInfo extends Component {
 
     const manaIcons = (type) => [
       [icons.mana[type], player.mana[type], theme.textLightC, theme.mana[type]],
-      [icons.spellPower, player.attribs.spellPower[type], theme.textLightC, theme.mana[type]],
-      [icons.armor, player.attribs.defence[type], theme.textLightC, theme.mana[type]],
-      [icons.speed, player.attribs.speed[type], theme.textLightC, theme.mana[type]],
+      [icons.spellPower, player.spellPower[type], theme.textLightC, theme.mana[type]],
+      [icons.armor, player.defence[type], theme.textLightC, theme.mana[type]],
+      [icons.speed, player.speed[type], theme.textLightC, theme.mana[type]],
     ];
 
     return (

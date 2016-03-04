@@ -1,10 +1,8 @@
 import React, { Component, PropTypes } from 'react';
 import Radium from 'radium';
-import {connectMultireducer} from 'multireducer';
 import { connect } from 'react-redux';
 
 import * as styles from '../styles';
-import * as popupActionsRaw from '../actions/popup';
 
 @Radium
 class Popup extends Component {
@@ -19,11 +17,13 @@ class Popup extends Component {
   }
 
   render() {
-    const {children, popup, x, y, w, h, theme, bgColor} = this.props;
+    const {ui, theme} = this.props;
+
+    const {popupVisible: visible, popupX: x, popupY: y, popupW: w, popupH: h, popupContent: content} = ui;
 
     const style = {
       ...styles.gameComponent,
-      background: bgColor ? bgColor : theme.grey,
+      background: theme.black,
       border: '2px',
       borderRadius: 4,
       color: 'white',
@@ -32,22 +32,18 @@ class Popup extends Component {
       width: `${w}%`,
       height: `${h}%`,
 
-      display: popup.visible ? 'block' : 'none',
+      display: visible ? 'block' : 'none',
     };
 
     return (
       <div onClick={this.onClick} style={style}>
-        { children }
+        { content }
       </div>
      );
   }
 }
 
-const mapStateToProps = (key, state) => ({ popup: state.popups[key], theme: state.theme });
-
-const mapDispatchToProps = popupActionsRaw;
-
-export default connectMultireducer(
-  mapStateToProps,
-  mapDispatchToProps
+export default connect(
+  ({ui, theme}) => ({ui, theme}),
+  {},
 )(Popup);

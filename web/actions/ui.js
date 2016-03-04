@@ -1,6 +1,5 @@
 import * as protocol from '../../game/protocol';
 import * as gameActions from './game';
-import * as popupActions from './popup';
 import { multireducerWrapAction } from 'multireducer';
 
 import _ from 'lodash';
@@ -8,10 +7,22 @@ import _ from 'lodash';
 const SELECTED_SPELL = 'ui/select_spell';
 const SELECTED_TARGET = 'ui/select_target';
 
+const SHOW_POPUP = 'ui/show_popup';
+const CLOSE_POPUP = 'ui/close_popup';
+
+export const NO_TARGETING = 'NO_TARGETING';
+export const TARGETING_ENEMY = 'TARGETING_ENEMY';
+
 export const initialState = {
-  targetMode: protocol.TARGET_NONE,
+  targetMode: NO_TARGETING,
   readyToConfirm: false,
   spellInfo: undefined,
+  popupVisible: false,
+  popupX: 0,
+  popupY: 0,
+  popupW: 0,
+  popupH: 0,
+  popupContent: null,
 };
 
 export default function(state = initialState, action) {
@@ -19,13 +30,28 @@ export default function(state = initialState, action) {
     case SELECTED_SPELL:
       return {
         ...state,
-        targetMode: protocol.TARGET_ENEMY,
+        targetMode: TARGETING_ENEMY,
         spellInfo: action.spellInfo,
       };
     case SELECTED_TARGET:
       return {
         ...state,
-        targetMode: protocol.TARGET_NONE,
+        targetMode: NO_TARGETING,
+      };
+    case SHOW_POPUP:
+      return {
+        ...state,
+        popupVisible: true,
+        popupX: action.x,
+        popupY: action.y,
+        popupW: action.w,
+        popupH: action.h,
+        popupContent: action.content,
+      };
+    case CLOSE_POPUP:
+      return {
+        ...state,
+        popupVisible: false,
       };
   }
   return state;
@@ -37,29 +63,22 @@ export function selectedSpell(spell) {
   };
 }
 
-export function selectedSkill(skillName, color) {
+export function selectedSkill(skillIndex) {
   return (dispatch, getState) => {
     const state = getState();
-    const skill = state.game.me.skills[skillName][color];
-    switch (skill.targetType) {
-      case protocol.TARGET_NONE:
-        dispatch(gameActions.castSpell({
-          spellType: protocol.SPELL_TYPE_SKILL,
-          id: `${skillName}.${color}`,
-        }));
-        break;
-      case protocol.TARGET_ENEMY:
-        dispatch({
-          type: SELECTED_SPELL,
-          spellInfo: {
-            spellType: protocol.SPELL_TYPE_SKILL,
-            id: `${skillName}.${color}`,
-          }
-        });
-        break;
+    if(skillIndex > 1) {
+      dispatch(gameActions.castSpell({
+        skillIndex: skillIndex,
+      }));
+    } else {
+      dispatch({
+        type: SELECTED_SPELL,
+        spellInfo: {
+          skillIndex: skillIndex,
+        }
+      });
     }
-
-    dispatch(closeAllPopups());
+    dispatch(closePopup());
   };
 }
 
@@ -74,11 +93,13 @@ export function selectedTarget(target) {
   };
 }
 
-export function closeAllPopups() {
-  return (dispatch, getState) => {
-    const state = getState();
-    const keys = _.keys(state.popups);
-    keys.forEach(k =>
-      dispatch(multireducerWrapAction(popupActions.hide(), k)));
+export function showPopup(x, y, w, h, content) {
+  return {
+    type: SHOW_POPUP,
+    x, y, w, h, content
   };
+}
+
+export function closePopup() {
+  return {type: CLOSE_POPUP};
 }

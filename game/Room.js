@@ -1,38 +1,29 @@
 import * as protocol from './protocol';
-import * as Player from './Player';
-import * as Effect from './Effect';
-import * as Spell from './Spell';
-import * as util from './util';
-import * as Planet from './Planet';
+import World from './World';
+import Ai from './Ai';
+
 import _ from 'lodash';
+import { nextTick } from 'process';
 
 export default class Room {
   constructor() {
     this.started = false;
+    this.controllers = [];
     this.players = [];
-    this.currentTurn = 1;
-    this.planets = [];
+    this.ais = [];
 
-    this.effects = [];
+    this.currentSpells = [];
+    this.world = new World();
 
-    this.runEffect = ::this.runEffect;
-    this.endTurn = ::this.endTurn;
-  }
-
-  turnEffects(i) {
-    var ef = this.effects;
-    _.range(0, Math.max(0, i - ef.length + 1)).forEach(() => ef.push([]));
-    return ef[i];
+    this.onTurnStart = ::this.onTurnStart;
   }
 
   pushStateUpdate() {
     this.players.forEach((p, i) => {
-      if (p.ws) {
-        p.ws.send(JSON.stringify({
-          type: protocol.STATE_UPDATE,
-          data: this.toJSON(p, i),
-        }));
-      }
+      p.ws.send(JSON.stringify({
+        type: protocol.STATE_UPDATE,
+        data: this.toJSON(p, i),
+      }));
     });
   }
 
@@ -49,130 +40,71 @@ export default class Room {
 
   addPlayer(player) {
     this.players.push(player);
+    this.controllers.push(player);
+    player.room = this;
     this.pushStateUpdate();
   }
 
   start() {
-    this.started = true;
-    var bots = [];
-    while (this.players.length < 2) {
-      const p = Player.dummy(this.players.length);
-      this.players.push(p);
-      bots.push(p);
+    while (this.controllers.length < 2) {
+      var a = new Ai(this);
+      this.controllers.push(a);
+      this.ais.push(a);
     }
-    this.planets = Planet.mkPlanets(this);
-    this.players.forEach((p, i) => p.start(i));
-    Planet.calcPlanetBonuses(this);
 
-    bots.forEach(p =>
-      this.spellCast(p, {spellType: protocol.SPELL_TYPE_PASS})
-    );
+    this.started = true;
+
+    this.world.start(this.controllers);
 
     this.pushStateUpdate();
+
+    setTimeout(this.onTurnStart, 50);
   }
 
   spellCast(player, castInfo) {
-    if(player.dead || player.ready)
+    var mage = player.mage;
+    if(mage.dead || mage.ready)
       return;
 
-    castInfo.player = player;
-    player.ready = true;
+    var skill = mage.skills[castInfo.skillIndex];
 
-    var spell;
+    var target = 0;
+    if(castInfo.target)
+      target = castInfo.target;
 
-    if (castInfo.spellType === protocol.SPELL_TYPE_SKILL)
-      spell = _.get(player.skills, castInfo.id);
-    else if (castInfo.spellType === protocol.SPELL_TYPE_PASS)
-      spell = Spell.pass;
+    var possibleTargets = skill.possibleTargets(this.world, mage);
 
-    spell.mkEffects(this, castInfo);
-    if (!this.checkReady())
-      this.pushStateUpdate();
+    if (!_.includes(possibleTargets, target))
+      return;
+
+    this.currentSpells.push({mage, spell: skill, target});
+    mage.ready = true;
+
+    this.maybeAdvanceTurn();
   }
 
-  checkReady() {
-    if(_.every(this.players, {ready: true})) {
-      this.advanceTurn();
-      return true;
-    } else
-      return false;
-  }
-
-  advanceTurn() {
-    var efs = this.turnEffects(0);
-
-    efs.push(Effect.endOfTurn(() => {
-      this.sendLogLine(`Moving planets`);
-      Planet.movePlanets(this);
-      Planet.calcPlanetBonuses(this);
-    }));
-
-    efs.push(Effect.endOfTurn(() => {
-      this.sendLogLine(`Turn ${this.currentTurn} ended`);
-      this.currentTurn++;
-    }));
-
-    efs = _.sortBy(efs, (e) => -e.priority());
-
-    this.players.forEach(p => p.prevTurnActingOrder = undefined);
-
-    this.runEffect(efs, 1);
-  }
-
-  runEffect(es, order) {
-    const betweenActionDelay = 2000;
-    const actingOrderTextDelay = 500;
-
-    const e = es.shift();
-    function run() {
-      e.effect();
-      this.pushStateUpdate();
-      if(es.length === 0) {
-        this.endTurn();
-      } else {
-        setTimeout(this.runEffect, betweenActionDelay, es, order);
-      }
+  maybeAdvanceTurn() {
+    if(this.world.isEveryoneReady()) {
+      this.world.advanceTurn(this.currentSpells);
+      this.currentSpells = [];
+      if(!this.world.ended)
+        setTimeout(this.onTurnStart, 50);
     }
-
-    if(e.owningPlayer && e.owningPlayer.prevTurnActingOrder === undefined) {
-      const ordinal = util.ordinals.length >= order ? util.ordinals[order - 1] : '';
-      const speed = Math.floor(e.priority() / Effect.speedMult);
-      this.sendLogLine(`${e.owningPlayer.name} acts ${ordinal} (speed ${speed})`);
-      e.owningPlayer.prevTurnActingOrder = order++;
-      setTimeout(run.bind(this), actingOrderTextDelay);
-    } else
-      run.call(this);
-  }
-
-  endTurn() {
-    this.effects.shift();
-
-    var alive = _.filter(this.players, {dead: false});
-    if (alive.length === 1)
-      this.sendLogLine(`${alive[0].name} Won!`);
-    else if (alive.length === 0)
-      this.sendLogLine(`Draw!`);
-
-    this.players.forEach(p => {
-      if (!p.dead)
-        p.ready = false;
-    });
-
-    this.players.forEach(p => {
-      if(!p.ws && !p.ready) {
-        this.spellCast(p, {spellType: protocol.SPELL_TYPE_PASS});
-      }
-    });
-
     this.pushStateUpdate();
   }
 
+  onTurnStart() {
+    this.ais.forEach(ai => ai.makeMove());
+  }
+
   toJSON(player) {
+    var world = this.world.toJSON();
+    var me = _.find(world.mages, {id: player.id});
+
     return {
       started: this.started,
-      players: this.players.map(_.method('toJSON', false, this)),
-      me: player.toJSON(true, this),
-      planets : this.planets,
+      me,
+      ...this.world.toJSON(player),
     };
   }
 }
